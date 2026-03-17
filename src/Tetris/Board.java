@@ -30,6 +30,8 @@ public class Board {
         Clock.INSTANCE.suscribe(() -> {lowerPiece(currentPiece);});
     }
 
+
+
     public void main(String[] args) {
 
     Clock.INSTANCE.startGame();
@@ -39,5 +41,4 @@ public class Board {
         }
     }
 
-    //Este es el comentario de prueba de arturo
 }

@@ -1,0 +1,25 @@
+El siguiente es un prompt para poder apoyarse con Inteligencia Artificial respecto a dudas para poder entender el programa
+(sin que la IA programe nada por nosotros)
+
+
+
+PROMPT PARA APOYARSE CON INTELIGENCIA ARTIFICIAL:
+
+Soy un estudiante de universidad que está recién aprendiendo programación, y para una clase se nos dejó como proyecto de equipo recrear
+un videojuego de nuestra elección, a lo que mi equipo eligió recrear Tetris en Java.
+La arquitectura que han planeado por ahora se ve así:
+Una clase enum Clock con un evento universal tick() implementado por medio de una lista de Runnables y una función que itera y activa cada uno de ellos, que se ejecuta cada cierto tiempo utilizando un ScheduledExecutorService, y tiene una función updateClockSpeed() para cambiar la velocidad de ejecución.
+
+Una clase Board con: un atributo board que es una matriz de 0s y 1s 10x20 encargada de representar el estado actual del tablero, un método lowerPiece(Piece piece) que implementa el descenso de las piezas, un método checkLines() para detectar líneas completadas, ambas suscritas a tick.
+Una clase Piece que representa una pieza del juego, con un atributo Shape que es una matriz binaria representando su forma, y un método rotate() para transponerlas y rotarlas;
+y una clase GUI, encargada de manejar la interfaz gráfica utilizando la librería de JavaFX.
+
+
+Si bien entiendo a grandes rasgos el funcionamiento y conceptos básicos de Java, aún hay cosas que no comprendo y no logro seguir
+el ritmo de todo el diseño y código ya implementado.
+
+Teniendo en cuenta todo este contexto, y evitando darme respuestas directas a cómo debo hacer las cosas, ayúdame con lo siguiente:
+
+(Añade una explicación de las funciones lambda)
+
+
