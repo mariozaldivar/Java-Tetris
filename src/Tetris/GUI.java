@@ -33,7 +33,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
 
         Button IniciarJuego = new Button();
 
-
+        //test
 
         Button Configuracion = new Button();
         Button Salir = new Button();
