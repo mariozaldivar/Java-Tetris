@@ -15,20 +15,15 @@ public class Board {
     public Piece currentPiece = new Piece();
 
 
-    void probarTick() {
-        System.out.println("La clase Board está reconociendo el Tick");
-    }
+    void probarTick() { System.out.println("La clase Board está reconociendo el Tick"); }
 
-    public Piece generatePiece() {
-        return new Piece();
-    }
+    public Piece generatePiece() { return new Piece(); }
+
     public void lowerPiece(Piece piece) {
     System.out.println("The board is lowering the Piece");
     }
 
-    Board() {
-        Clock.INSTANCE.suscribe(() -> {lowerPiece(currentPiece);});
-    }
+    Board() { Clock.INSTANCE.suscribe(() -> {lowerPiece(currentPiece);});}
 
 
 

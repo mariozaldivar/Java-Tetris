@@ -39,7 +39,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
         TableroTetris.setAlignment(Pos.CENTER); //Hace que todos los nodo de Gripanes se dibujen centrados
         for (int rows = 0; rows < 20; rows++){ //Dos for para hacer que el tablero tenga 20 filas y 10 columnas
             for (int colums = 0; colums < 10; colums++){
-                Rectangle Celda = new Rectangle(20,20); //Rectangle son los cuadrados de las celdas
+                Rectangle Celda = new Rectangle(40,40); //Rectangle son los cuadrados de las celdas
                 Celda.setOpacity(0.4);
                 Celda.setStroke(Color.BLACK);
                 TableroTetris.add(Celda, colums, rows); //Se anade la celda como un hijo de Tablerotetris en una posicion indicada por las colums y rows

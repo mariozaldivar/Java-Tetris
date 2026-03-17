@@ -21,26 +21,21 @@ public enum Clock {
 
     private boolean playing = true;
     private boolean isPaused = false;
+    private long speed = 1000; // Es la velocidad con la que se actualiza el tick
+
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     // Esta clase crea un scheduler, que se encarga de ejecutar automáticamente una función pasado un tiempo
     // El nombre es largo y parece confusa, pero es importante para la lógica del clock
-
     private ScheduledFuture<?> currentTickTask;
     // Este atributo es para almacenar el "proceso" del scheduler
     // Es importante porque, si después queremos cambiar la velocidad de cada cuanto hay un tick
     // es necesario cancelar el proceso anterior, entonces con esta variable mantenemos el acceso
 
-    private long speed = 1000; // Es la velocidad con la que se actualiza el tick
 
-    public void pauseGame() {
-        isPaused = true;
-    }
-    public void unpauseGame() {
-        isPaused = false;
-    }
-    public void stopPlaying() {
-        playing = false;
-    }
+    public void pauseGame() { isPaused = true; }
+    public void unpauseGame() { isPaused = false; }
+    public void stopPlaying() { playing = false;}
+
     public void updateClockSpeed(long newSpeed) { // Sirve para cambiar la velocidad del reloj
         if (currentTickTask != null && !currentTickTask.isCancelled())
         {
@@ -48,6 +43,8 @@ public enum Clock {
         }
         currentTickTask = scheduler.scheduleAtFixedRate(this::tick, 0, newSpeed, TimeUnit.MILLISECONDS );
     }
+
+
     public void startGame() {// Esta función utiliza el método updateClockSpeed para crear el primer proceso
 
         updateClockSpeed(speed);
