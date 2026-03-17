@@ -44,7 +44,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
         BorderPane Gameover = new BorderPane();
         Board Update = new Board();
 
-
+        //test
 
         SetupMenuButtons(IniciarJuego,"Iniciar",scene,EscenaJuego);
         SetupMenuButtons(Configuracion,"Configuracion",scene,EscenaConfiguracion);
