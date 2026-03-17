@@ -70,6 +70,27 @@ public enum Clock {
     }
 
 
+
+    public void printIntMatrix(int[][] matrix){
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.print(matrix[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    public int[][] copyIntMatrix(int[][] matrix) {
+        int[][] buffer = new int[matrix.length][matrix[0].length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                buffer[i][j] = matrix[i][j];
+            }
+        }
+        return buffer;
+    }
+
 }
 
 

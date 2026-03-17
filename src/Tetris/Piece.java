@@ -5,16 +5,75 @@ import java.util.Random;
 
 public class Piece {
 
-    public ArrayList<int[]> shape;
+    public int[][] shape;
     Random random = new Random();
+    public int[][][] allShapes =
+            {
+                    {
+                        {1, 1},
+                        {1, 1}
+                    },
 
-    public void rotate()
-    {
 
-    }
+                    {
+                            {0, 0, 0, 0},
+                            {2, 2, 2, 2},
+                            {0, 0, 0, 0},
+                            {0, 0, 0, 0}
+                    },
+
+                    {
+                            {0, 0, 0},
+                            {3, 3, 0},
+                            {0, 3, 3}
+                    },
+
+                    {
+                            {0, 0, 0},
+                            {0, 4, 4},
+                            {4, 4, 0}
+                    },
+                    {
+                            {0, 0, 0},
+                            {5, 0, 0},
+                            {5, 5, 5}
+                    },
+                    {
+                            {0, 0, 0},
+                            {0, 0, 6},
+                            {6, 6, 6}
+                    },
+                    {
+                            {0, 0, 0},
+                            {0, 7, 0},
+                            {7, 7, 7}
+                    },
+
+            };
 
     Piece() {
-
+        int newSelect = random.nextInt(7);
+        this.shape = this.allShapes[newSelect];
     }
+
+    public void rotate() {
+        int[][] buffer = Clock.INSTANCE.copyIntMatrix(this.shape);
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                buffer[j][(shape.length - 1) - i] = this.shape[i][j];
+                // Si haces la rotación de una pieza en sentido antihorario, puedes notar que
+                // las filas se intercambian por las columnas, y lsa columnas se invierten.
+            }
+        }
+        this.shape = buffer;
+    }
+
+    public void main() {
+
+        Clock.INSTANCE.printIntMatrix(this.shape);
+        this.rotate();
+        Clock.INSTANCE.printIntMatrix(this.shape);
+    }
+
 
 }
