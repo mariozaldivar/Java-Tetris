@@ -24,7 +24,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.BorderPane;
 
 public class GUI extends Application { // GUI quiere decir Graphical User Interface
-
     public static void main(String[] args){
         launch(args);
     } //Main temporal para correr la GUI
@@ -53,6 +52,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
             } else if (event.getCode() == KeyCode.D){
                 System.out.println(("Se ha presionado la tecla D"));
             }
+
         });
 
         scene.setOnKeyReleased(event -> { //setOnKeyReleased permite detectar cuando se suelta una tecla

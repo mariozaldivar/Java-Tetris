@@ -2,6 +2,8 @@ package Tetris;
 
 public class Board {
 
+    public int[][] board = new int[20][10]; // Declara un board 10x20 y lo inicializa en 0s
+    public Piece currentPiece = new Piece();
 
     /*
     Cosas necesarias para entender este script:
@@ -11,14 +13,15 @@ public class Board {
     la sintaxis es así: (parametros) -> { código de la función aquí}
      */
 
-    public int[][] board = new int[20][10]; // Declara un board 10x20 y lo inicializa en 0s
-    public Piece currentPiece = new Piece();
-    Runnable currentLower;
-    void probarTick() { System.out.println("La clase Board está reconociendo el Tick"); }
-
     public Piece generatePiece() { return new Piece(); }
 
-    public void lowerPiece(Piece piece) {
+    Board() {
+        currentPiece = generatePiece();
+        Clock.INSTANCE.suscribe(this::lowerPiece);
+    }
+
+
+    public void lowerPiece() {
         if (checkMoveDown(this.currentPiece)) {
             int len = this.currentPiece.shape.length;
             int row = this.currentPiece.row;
@@ -26,8 +29,10 @@ public class Board {
 
             for (int i = this.currentPiece.offset; i < len; i++) {
                 for (int j = 0; j < len; j++)  {
-                    this.board[(row + len) - i + 1][col + j] = this.currentPiece.shape[len - 1 - i][j];
-                    this.board[row + len  - i][col + j] = 0;
+                    int currentRow = (row + len) - i;
+                    int currentCol = col + j;
+                    this.board[currentRow + 1][currentCol] = this.currentPiece.shape[len - 1 - i][j];
+                    this.board[currentRow][currentCol] = 0;
                 }
                 System.out.println("Se está checando la row: " + (row+len - i));
             }
@@ -67,11 +72,6 @@ public class Board {
         Clock.INSTANCE.printIntMatrix(this.board);
         System.out.println();
     }
-    Board() {
-        currentPiece = generatePiece();
-        Runnable currentLower = () -> {lowerPiece(currentPiece);};
-        Clock.INSTANCE.suscribe(currentLower);
-    }
 
 
     public void main(String[] args) {
@@ -84,4 +84,8 @@ public class Board {
         }
     }
 
+    public void GameOver() {
+        Clock.INSTANCE.stopPlaying();
+        Clock.INSTANCE.unsubscribe(this::lowerPiece);
+    }
 }
