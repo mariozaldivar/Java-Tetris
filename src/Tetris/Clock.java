@@ -21,7 +21,7 @@ public enum Clock {
 
     private boolean playing = true;
     private boolean isPaused = false;
-    private long speed = 1000; // Es la velocidad con la que se actualiza el tick
+    private long speed = 500; // Es la velocidad con la que se actualiza el tick
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     // Esta clase crea un scheduler, que se encarga de ejecutar automáticamente una función pasado un tiempo
@@ -58,6 +58,7 @@ public enum Clock {
     public void suscribe(Runnable listener) { // Método para suscribir y almacenar métodos al evento
         tickListeners.add(listener);
     }
+    public void unsubscribe(Runnable listener) { tickListeners.remove(listener);}
     // Falta implementar función unsubscribe
 
     private void tick() {// Evento Tick
@@ -74,7 +75,7 @@ public enum Clock {
     public void printIntMatrix(int[][] matrix){
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j]);
+                System.out.print(matrix[i][j] + " ");
             }
             System.out.println();
         }

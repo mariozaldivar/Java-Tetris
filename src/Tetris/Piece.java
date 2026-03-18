@@ -6,6 +6,8 @@ import java.util.Random;
 public class Piece {
 
     public int[][] shape;
+    public int row = 0;
+    public int col;
     Random random = new Random();
     public int[][][] allShapes =
             {
@@ -54,6 +56,17 @@ public class Piece {
     Piece() {
         int newSelect = random.nextInt(7);
         this.shape = this.allShapes[newSelect];
+        switch (this.shape.length) {
+            case 2:
+                this.col = 4;
+                break;
+            case 3:
+                this.col = 3;
+                break;
+            case 4:
+                this.col = 3;
+                break;
+        }
     }
 
     public void rotate() {
