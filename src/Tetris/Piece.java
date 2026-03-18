@@ -8,6 +8,7 @@ public class Piece {
     public int[][] shape;
     public int row = 0;
     public int col;
+    public int offset;
     Random random = new Random();
     public int[][][] allShapes =
             {
@@ -67,6 +68,20 @@ public class Piece {
                 this.col = 3;
                 break;
         }
+        this.checkOffset();
+    }
+    public void checkOffset() {
+        this.offset = 0;
+        int len = this.shape.length - 1;
+        for (int i = 0; i < this.shape.length; i++) {
+            for (int j = 0; j < this.shape.length; j++) {
+                if (this.shape[len - i][j] > 0) {
+                    return;
+                }
+
+            }
+            this.offset++;
+        }
     }
 
     public void rotate() {
@@ -79,6 +94,7 @@ public class Piece {
             }
         }
         this.shape = buffer;
+        this.checkOffset();
     }
 
     public void main() {

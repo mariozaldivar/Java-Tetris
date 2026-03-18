@@ -24,12 +24,10 @@ public class Board {
             int row = this.currentPiece.row;
             int col = this.currentPiece.col;
 
-            for (int i = 0; i < len; i++) {
+            for (int i = this.currentPiece.offset; i < len; i++) {
                 for (int j = 0; j < len; j++)  {
-
-                    this.board[(row + len ) - i + 1][col + j] = this.currentPiece.shape[len - 1 - i][j];
+                    this.board[(row + len) - i + 1][col + j] = this.currentPiece.shape[len - 1 - i][j];
                     this.board[row + len  - i][col + j] = 0;
-
                 }
                 System.out.println("Se está checando la row: " + (row+len - i));
             }
@@ -49,9 +47,9 @@ public class Board {
 
     private boolean checkMoveDown(Piece piece) {
 
-        if (piece.row + 1 + (piece.shape.length - 1) < 19) {
+        if ((piece.row - piece.offset) + 1 + (piece.shape.length - 1) < 19) {
             for (int j = 0; j < piece.shape.length; j++ ) {
-                if (!(this.board[piece.row + piece.shape.length + 1][piece.col + j] == 0)) {
+                if ((!(this.board[piece.row + piece.shape.length - piece.offset + 1][piece.col + j] == 0)) && (this.board[piece.row + piece.shape.length - piece.offset][piece.col + j] != 0) ){
                     System.out.println("Hay algun cuadrado abajo que no es 0");
                     return false;
                 }
@@ -63,8 +61,6 @@ public class Board {
             System.out.println("La pieza tocó fondo");
             return false;
         }
-
-
     }
 
     public void printBoard() {
