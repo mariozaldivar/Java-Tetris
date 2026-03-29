@@ -13,11 +13,27 @@ public class Board {
     la sintaxis es así: (parametros) -> { código de la función aquí}
      */
 
-    public Piece generatePiece() { return new Piece(); }
+    public void generatePiece() { 
+
+      Piece piece = new Piece();
+
+      for (int i = 0; i < piece.shape.length; i++) {
+        for (int j = 0; j < piece.shape.length; j++) {
+          if (board[piece.row + i][piece.col + j] != 0 && piece.shape[i][j] != 0) {   
+            System.out.println("No se puede generar una nueva pieza porque hay una pieza en las coordenadas row: " + piece.row+i + "y col: " + piece.row+j);
+            GameOver();
+            return;
+          }
+        }
+
+      }
+      this.currentPiece = piece;
+    }
 
     Board() {
-        currentPiece = generatePiece();
+        generatePiece();
         Clock.INSTANCE.suscribe(this::lowerPiece);
+        
     }
 
 
@@ -46,9 +62,51 @@ public class Board {
         else
         {
             System.out.println("La pieza no puede bajar");
-            this.currentPiece = generatePiece();
+            generatePiece();
         }
     }
+
+
+    public void rotatePiece() {
+
+      if (checkExactRotation()) {
+        this.currentPiece.rotate();
+      }
+
+      else {
+
+        // TODO: Introducir Wall Bounce
+
+      }
+
+    }
+
+    public boolean checkExactRotation() {
+        // TODO: Revisar el funcionamiento de esta función
+        int[][] buffer = Clock.INSTANCE.copyIntMatrix(this.currentPiece.shape);
+        for (int i = 0; i < this.currentPiece.shape.length; i++) {
+            for (int j = 0; j < this.currentPiece.shape[i].length; j++) {
+                buffer[j][(this.currentPiece.shape.length - 1) - i] = this.currentPiece.shape[i][j];
+                // Si haces la rotación de una pieza en sentido antihorario, puedes notar que
+                // las filas se intercambian por las columnas, y lsa columnas se invierten.
+            }
+        }
+
+        for (int i = 0; i < buffer.length - 1; i++) {
+          for (int j = 0; j < buffer.length - 1; j++) {
+            if ((board[this.currentPiece.row + i][this.currentPiece.col + j] != 0) && (buffer[i][j] != 0)) {
+
+              return false;
+
+            }
+          }
+        }
+
+
+        return true;
+    }
+
+
 
     private boolean checkMoveDown(Piece piece) {
 
@@ -85,7 +143,7 @@ public class Board {
     }
 
     public void GameOver() {
-        Clock.INSTANCE.stopPlaying();
+        Clock.INSTANCE.gameOver();
         Clock.INSTANCE.unsubscribe(this::lowerPiece);
     }
 }

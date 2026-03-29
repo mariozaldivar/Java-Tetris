@@ -39,7 +39,7 @@ public enum Clock {
 
     public void pauseGame() { isPaused = true; }
     public void unpauseGame() { isPaused = false; }
-    public void stopPlaying() { playing = false;}
+    public void gameOver() { playing = false; currentTickTask.cancel(false); System.out.println("Se ha terminado el juego");}
 
     private void tick() {// Evento Tick
         if (isPaused) { return; }
