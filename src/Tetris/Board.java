@@ -73,6 +73,9 @@ public class Board {
         System.out.println();
     }
 
+    public int[][] getBoardState() {
+        return Clock.INSTANCE.copyIntMatrix(this.board);
+    }
 
     public void main(String[] args) {
 
@@ -88,4 +91,5 @@ public class Board {
         Clock.INSTANCE.stopPlaying();
         Clock.INSTANCE.unsubscribe(this::lowerPiece);
     }
+
 }
