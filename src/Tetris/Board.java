@@ -1,10 +1,8 @@
 package Tetris;
 
-import java.time.Clock;
-
 public class Board {
 
-  public int[][] board = new int[20][10]; // Declara un board 10x20 y lo inicializa en 0s
+  public int[][] board = new int[22][10]; // Declara un board 10x20 (con 2 de overhead) y lo inicializa en 0s
   public Piece currentPiece = new Piece();
 
   /*
@@ -29,13 +27,14 @@ public class Board {
         if (board[piece.row + (piece.shape.length - 1 - i)][piece.col + j] != 0
             && piece.shape[(piece.shape.length - 1 - i)][j] != 0) {
           System.out.println("No se puede generar una nueva pieza porque hay una pieza en las coordenadas row: "
-              + piece.row + i + "y col: " + piece.row + j);
+              + piece.row + i + "y col: " + piece.col + j);
           GameOver();
           return;
         }
       }
 
     }
+    System.out.println("Se ha generado una nueva pieza");
     this.currentPiece = piece;
   }
 
@@ -43,6 +42,12 @@ public class Board {
     generatePiece();
     Clock.INSTANCE.suscribe(this::hardDrop);
 
+  }
+
+  public void lowerAndGeneratePiece() {
+    if (lowerPiece() == false) {
+      generatePiece();
+    }
   }
 
   public boolean lowerPiece() {
@@ -74,25 +79,68 @@ public class Board {
 
     } else {
       System.out.println("La pieza no puede bajar");
-      generatePiece();
       return false;
     }
   }
 
-  public void rotatePiece() {
+  /*
+   * public void rotatePiece() {
+   * // Lógica para esta función:
+   * // Crear shapeBuffer, que es la forma de la pieza, pero rotada, y registrar
+   * su offset
+   * // Borrar la pieza original del mapa (hacer un for, y hacer que todas las
+   * coordenadas donde la pieza debería
+   * // tener pieza sean igual a cero)
+   * // Revisar el offset de la pieza buffer, restarle el offset de la rotación
+   * anterior, y ajustar las coordenadas
+   * // que se van a revisar utilizando el offset ajustado
+   * // Revisar si no hay colisiones con la posición en la que quedaría la pieza
+   * rotada,
+   * // detectar el caso de que la pieza salga del mapa, e implementar wall bounce
+   * // En caso de que la rotación no sea posible, volver a dibujar la pieza
+   * original en el tablero
+   * 
+   * if (checkRotationWithBuffer()) {
+   * // TODO: Revisar el funcionamiento de esta función
+   * int[][] buffer = Clock.INSTANCE.copyIntMatrix(this.currentPiece.shape);
+   * int bufferOffset;
+   * for (int i = 0; i < this.currentPiece.shape.length; i++) {
+   * for (int j = 0; j < this.currentPiece.shape[i].length; j++) {
+   * buffer[j][(this.currentPiece.shape.length - 1) - i] =
+   * this.currentPiece.shape[i][j];
+   * // Si haces la rotación de una pieza en sentido antihorario, puedes notar que
+   * // las filas se intercambian por las columnas, y lsa columnas se invierten.
+   * }
+   * }
+   * bufferOffset = this.currentPiece.checkOffset(buffer);
+   * 
+   * for (int i = 0; i < buffer.length - 1; i++) {
+   * for (int j = 0; j < buffer.length - 1; j++) {
+   * if ((board[this.currentPiece.row + i][this.currentPiece.col + j] != 0) &&
+   * (buffer[i][j] != 0)) {
+   * 
+   * 
+   * }
+   * }
+   * }
+   * 
+   * }
+   */
 
-    if (checkExactRotation()) {
-      this.currentPiece.rotate();
-    }
-
-    else {
-
-      // TODO: Introducir Wall Bounce
-      // TODO: Ajustar pieza de acuerdo a su rotación con el offset
-
-    }
-
-  }
+  /*
+   * public void rotate() {
+   * int[][] buffer = Clock.INSTANCE.copyIntMatrix(this.shape);
+   * for (int i = 0; i < shape.length; i++) {
+   * for (int j = 0; j < shape[i].length; j++) {
+   * buffer[j][(shape.length - 1) - i] = this.shape[i][j];
+   * // Si haces la rotación de una pieza en sentido antihorario, puedes notar que
+   * // las filas se intercambian por las columnas, y lsa columnas se invierten.
+   * }
+   * }
+   * this.shape = buffer;
+   * this.offset = checkOffset(buffer);
+   * }
+   */
 
   /*
    * public void movePieceLeft() {
@@ -119,35 +167,12 @@ public class Board {
     while (lowerPiece()) {
       assert true;
     }
-  }
-
-  public boolean checkExactRotation() {
-    // TODO: Revisar el funcionamiento de esta función
-    int[][] buffer = Clock.INSTANCE.copyIntMatrix(this.currentPiece.shape);
-    for (int i = 0; i < this.currentPiece.shape.length; i++) {
-      for (int j = 0; j < this.currentPiece.shape[i].length; j++) {
-        buffer[j][(this.currentPiece.shape.length - 1) - i] = this.currentPiece.shape[i][j];
-        // Si haces la rotación de una pieza en sentido antihorario, puedes notar que
-        // las filas se intercambian por las columnas, y lsa columnas se invierten.
-      }
-    }
-
-    for (int i = 0; i < buffer.length - 1; i++) {
-      for (int j = 0; j < buffer.length - 1; j++) {
-        if ((board[this.currentPiece.row + i][this.currentPiece.col + j] != 0) && (buffer[i][j] != 0)) {
-
-          return false;
-
-        }
-      }
-    }
-
-    return true;
+    lowerAndGeneratePiece();
   }
 
   private boolean checkMoveDown(Piece piece) {
 
-    if ((piece.row - piece.offset) + 1 + (piece.shape.length - 1) < 19) {
+    if ((piece.row - piece.offset) + 1 + (piece.shape.length - 1) < 21) {
       for (int j = 0; j < piece.shape.length; j++) {
         if ((!(this.board[piece.row + piece.shape.length - piece.offset + 1][piece.col + j] == 0))
             && (this.board[piece.row + piece.shape.length - piece.offset][piece.col + j] != 0)) {
@@ -172,10 +197,9 @@ public class Board {
 
     Clock.INSTANCE.startGame();
 
-    while (true) {
-      assert true;
-
+    while (Clock.INSTANCE.playing) {
     }
+    return;
   }
 
   public void GameOver() {
