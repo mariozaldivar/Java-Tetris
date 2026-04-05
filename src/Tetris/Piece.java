@@ -10,6 +10,7 @@ public class Piece {
   public int row = 0;
   public int col;
   public int offset;
+  public int size;
   Random random = new Random();
   public int[][][] allShapes = {
       {
@@ -56,6 +57,7 @@ public class Piece {
   Piece() {
     int newSelect = random.nextInt(7);
     this.shape = this.allShapes[newSelect];
+    this.size = this.shape.length;
     switch (this.shape.length) {
       case 2:
         this.col = 4;

@@ -145,26 +145,54 @@ public class Board {
    * }
    */
 
-  /*
-   * public void movePieceLeft() {
-   * if (!(this.currentPiece.col - 1 < 0)) {
-   * for (int i = 0; i < this.currentPiece.shape.length; i++) {
-   * // Revisar si hay alguna pieza en la col-1, si hay alguna pieza en la misma
-   * área de la figura, y si la pieza en el
-   * // área de la figura forma parte del shape
-   * if (this.board[this.currentPiece.row + i][this.currentPiece.col - 1] != 0 &&
-   * this.currentPiece.shape[i]) {
-   * 
-   * }
-   * }
-   * }
-   * else { return; }
-   * }
-   * 
-   * public void movePieceRight() {
-   * 
-   * }
-   */
+  public void checkAndMovePiece(String direction) {
+    int dir = 0;
+    switch (direction) {
+      case "right":
+        dir = 1;
+        break;
+      case "left":
+        dir = -1;
+        break;
+    }
+    deletePiece();
+
+    if (this.currentPiece.col + dir <= 9 && this.currentPiece.row + dir >= 0) {
+      for (int i = 0; i < this.currentPiece.size; i++) {
+        for (int j = 0; j < this.currentPiece.size; j++) {
+          if (this.currentPiece.shape[i][j] != 0
+              && this.board[this.currentPiece.row][this.currentPiece.col + dir] != 0) {
+            redrawPiece(this.currentPiece.row, this.currentPiece.col);
+            return;
+          }
+        }
+      }
+
+      redrawPiece(this.currentPiece.row, this.currentPiece.col + dir);
+      this.currentPiece.col += dir;
+    }
+  }
+
+  public void deletePiece() {
+
+    for (int i = 0; i < this.currentPiece.size; i++) {
+      for (int j = 0; j < this.currentPiece.size; j++) {
+        if (this.currentPiece.shape[i][j] != 0) {
+          this.board[this.currentPiece.row + i][this.currentPiece.col + j] = 0;
+        }
+      }
+    }
+  }
+
+  public void redrawPiece(int row, int col) {
+    for (int i = 0; i < this.currentPiece.size; i++) {
+      for (int j = 0; j < this.currentPiece.size; j++) {
+        if (this.currentPiece.shape[i][j] != 0) {
+          this.board[row + i][col + j] = this.board.shape[i][j];
+        }
+      }
+    }
+  }
 
   public void hardDrop() {
     while (lowerPiece()) {
