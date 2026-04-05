@@ -126,6 +126,9 @@ public class Board {
    * 
    * }
    */
+  public int[][] getBoardState() {
+    return Clock.INSTANCE.copyIntMatrix(this.board);
+  }
 
   /*
    * public void rotate() {
