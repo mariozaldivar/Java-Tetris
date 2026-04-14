@@ -12,8 +12,9 @@ MEDIO:
 - Implementar sistema de limpiado de líneas
 - Implementar menus de juego
 - Implementar "Hard-Drop"
+- Implementar cambio de velocidades cada cierto número de líneas
 
-DIFICIL: 
+DIFÍCIL: 
 - Implementar chequeos de colisión y rebote con los bordes
 - Implementar GhostPiece (pieza que indica en qué posición está cayendo la pieza actual)
 </p>
