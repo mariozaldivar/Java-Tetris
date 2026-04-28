@@ -1,9 +1,12 @@
 ### IntelliJ IDEA ###
 out/
+target/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
 
+
+bin/
 ### Eclipse ###
 .apt_generated
 .classpath
