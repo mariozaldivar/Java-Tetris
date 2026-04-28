@@ -84,10 +84,13 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
           Update.hardDrop();
           break;
         case KeyCode.A:
-          // Update.checkAndMovePiece("left");
+          Update.movePiece(0, -1);
           break;
         case KeyCode.D:
-          // Update.checkAndMovePiece("right");
+          Update.movePiece(0, 1);
+          break;
+        case KeyCode.S:
+          Update.movePiece(1, 0);
           break;
         default:
           System.out.println("El usuario o presionó la tecla: " + event.getText());

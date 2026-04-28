@@ -93,6 +93,14 @@ public class Game {
     }
   }
 
+  public void movePiece(int plusrow, int pluscol) {
+    int targetRow = this.currentPiece.row + plusrow;
+    int targetCol = this.currentPiece.col + pluscol;
+    if (canBeDrawn(targetRow, targetCol, this.currentPiece.shape)) {
+      drawCurrentPiece(targetRow, targetCol);
+    }
+  }
+
   public void hardDrop() {
 
     while (canBeDrawn(this.currentPiece.row + 1, this.currentPiece.col, this.currentPiece.shape)) {
