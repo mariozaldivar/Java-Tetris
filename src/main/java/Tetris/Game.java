@@ -20,11 +20,39 @@ public class Game {
    *
    */
 
+  public boolean checkIfCleared(int row) {
+    for (int j = 0; j < BOARD_WIDTH; j++) {
+      if (this.board[row][j] == 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public void checkLineClears() {
+    for (int i = BOARD_HEIGHT - 1; i >= 0; i--) {
+      if (checkIfCleared(i)) {
+        for (int clearedLine = i; clearedLine > 0; clearedLine--) {
+          for (int j = 0; j < BOARD_WIDTH; j++) {
+
+            this.board[clearedLine][j] = this.board[clearedLine - 1][j];
+          }
+
+        }
+        for (int j = 0; j < BOARD_WIDTH; j++) {
+          this.board[0][j] = 0;
+        }
+      }
+    }
+  }
+
   private void getNewPiece() {
+    checkLineClears();
     this.currentPiece = new Piece();
 
     // Antes de dibujar la nueva pieza, revisa si no hay nada en donde debería
     // dibujarse por default. En caso de que si, llama a GameOver
+
     if (canBeDrawn(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape)) {
       drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
     } else {
