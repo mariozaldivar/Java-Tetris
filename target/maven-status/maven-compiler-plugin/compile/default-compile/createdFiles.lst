@@ -4,5 +4,5 @@ Tetris/Piece.class
 Tetris/Clock.class
 Tetris/GUI$UpdateTetris.class
 org/openjfx/App.class
+Tetris/GUI$1.class
 Tetris/GUI.class
-Tetris/Board.class

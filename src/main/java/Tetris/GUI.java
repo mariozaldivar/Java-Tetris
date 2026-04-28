@@ -40,7 +40,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
 
   Map<String, KeyCode> Keybinds = new HashMap<>();
 
-  Board Update = new Board();
+  Game Update = new Game();
   UpdateTetris iniciar = new UpdateTetris();
 
   Text Titulo = new Text("Tetris");
@@ -80,11 +80,14 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
     scene.setOnKeyPressed(event -> {
       System.out.println(event.getCharacter());
       switch (event.getCode()) {
+        case KeyCode.SPACE:
+          Update.hardDrop();
+          break;
         case KeyCode.A:
           // Update.checkAndMovePiece("left");
           break;
         case KeyCode.D:
-          Update.checkAndMovePiece("right");
+          // Update.checkAndMovePiece("right");
           break;
         default:
           System.out.println("El usuario o presionó la tecla: " + event.getText());
@@ -100,7 +103,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
     @Override
     public void handle(long now) {
       if (now - lastUpdate >= VelocidaddeCaida) {
-        // Update.lowerPiece();
+        Update.pieceFall();
         UpdateTablero();
         lastUpdate = now;
       }
@@ -120,7 +123,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
   }
 
   private void UpdateTablero() {
-    // int[][] boardState = Update.getBoardState();
+    int[][] boardState = Update.getBoardState();
     for (int rows = 0; rows < 20; rows++) {
       for (int colum = 0; colum < 10; colum++) {
         Rectangle cell = (Rectangle) Cellmap[rows][colum];
