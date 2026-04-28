@@ -76,6 +76,21 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
     stage.setScene(scene);
     stage.setMaximized(true);
     stage.show(); // Muestras la ventana
+                  //
+    scene.setOnKeyPressed(event -> {
+      System.out.println(event.getCharacter());
+      switch (event.getCode()) {
+        case KeyCode.A:
+          Update.checkAndMovePiece("left");
+          break;
+        case KeyCode.D:
+          Update.checkAndMovePiece("right");
+          break;
+        default:
+          System.out.println("El usuario o presionó la tecla: " + event.getText());
+          break;
+      }
+    });
   }
 
   public class UpdateTetris extends AnimationTimer {
