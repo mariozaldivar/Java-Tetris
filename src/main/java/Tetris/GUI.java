@@ -81,7 +81,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
       System.out.println(event.getCharacter());
       switch (event.getCode()) {
         case KeyCode.A:
-          Update.checkAndMovePiece("left");
+          // Update.checkAndMovePiece("left");
           break;
         case KeyCode.D:
           Update.checkAndMovePiece("right");
@@ -100,7 +100,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
     @Override
     public void handle(long now) {
       if (now - lastUpdate >= VelocidaddeCaida) {
-        Update.lowerPiece();
+        // Update.lowerPiece();
         UpdateTablero();
         lastUpdate = now;
       }
@@ -120,7 +120,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
   }
 
   private void UpdateTablero() {
-    int[][] boardState = Update.getBoardState();
+    // int[][] boardState = Update.getBoardState();
     for (int rows = 0; rows < 20; rows++) {
       for (int colum = 0; colum < 10; colum++) {
         Rectangle cell = (Rectangle) Cellmap[rows][colum];

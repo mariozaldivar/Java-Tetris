@@ -9,8 +9,8 @@ public class Piece {
   public int[][] shape;
   public int row = 0;
   public int col;
-  public int offset;
   public int size;
+  public boolean drawn;
   Random random = new Random();
   public int[][][] allShapes = {
       {
@@ -58,6 +58,7 @@ public class Piece {
     int newSelect = random.nextInt(7);
     this.shape = this.allShapes[newSelect];
     this.size = this.shape.length;
+    this.drawn = false;
     switch (this.shape.length) {
       case 2:
         this.col = 4;
@@ -69,22 +70,6 @@ public class Piece {
         this.col = 3;
         break;
     }
-    this.offset = checkOffset(this.shape);
-  }
-
-  public int checkOffset(int[][] figure) {
-    int currentOffset = 0;
-    int len = figure.length - 1;
-    for (int i = 0; i < figure.length; i++) {
-      for (int j = 0; j < figure.length; j++) {
-        if (this.shape[len - i][j] > 0) {
-          return currentOffset;
-        }
-
-      }
-      currentOffset++;
-    }
-    return currentOffset;
   }
 
   public void main() {
