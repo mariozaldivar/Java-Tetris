@@ -2,7 +2,7 @@ package Tetris;
 
 public class Board {
 
-  public int[][] board = new int[22][10]; // Declara un board 10x20 (con 2 de overhead) y lo inicializa en 0s
+  public int[][] board = new int[20][10]; // Declara un board 10x20 (con 2 de overhead) y lo inicializa en 0s
   public Piece currentPiece = new Piece();
 
   /*
@@ -157,20 +157,22 @@ public class Board {
     }
     deletePiece();
 
-    if (this.currentPiece.col + dir <= 9 && this.currentPiece.row + dir >= 0) {
-      for (int i = 0; i < this.currentPiece.size; i++) {
-        for (int j = 0; j < this.currentPiece.size; j++) {
-          if (this.currentPiece.shape[i][j] != 0
-              && this.board[this.currentPiece.row][this.currentPiece.col + dir] != 0) {
-            redrawPiece(this.currentPiece.row, this.currentPiece.col);
-            return;
-          }
-        }
-      }
-
-      redrawPiece(this.currentPiece.row, this.currentPiece.col + dir);
-      this.currentPiece.col += dir;
-    }
+    /*
+     * if (this.currentPiece.col + dir <= 9 && this.currentPiece.row + dir >= 0) {
+     * for (int i = 0; i < this.currentPiece.size; i++) {
+     * for (int j = 0; j < this.currentPiece.size; j++) {
+     * if (this.currentPiece.shape[i][j] != 0
+     * && this.board[this.currentPiece.row][this.currentPiece.col + dir] != 0) {
+     * redrawPiece(this.currentPiece.row, this.currentPiece.col);
+     * return;
+     * }
+     * }
+     * }
+     * 
+     * redrawPiece(this.currentPiece.row, this.currentPiece.col + dir);
+     * this.currentPiece.col += dir;
+     * }
+     */
   }
 
   public void deletePiece() {
