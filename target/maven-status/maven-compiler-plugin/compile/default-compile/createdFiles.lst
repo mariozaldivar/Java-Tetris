@@ -2,6 +2,7 @@ org/openjfx/SystemInfo.class
 module-info.class
 Tetris/Piece.class
 Tetris/Clock.class
+Tetris/Game.class
 Tetris/GUI$UpdateTetris.class
 org/openjfx/App.class
 Tetris/GUI$1.class

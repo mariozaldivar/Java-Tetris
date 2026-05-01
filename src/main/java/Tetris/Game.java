@@ -20,6 +20,9 @@ public class Game {
    *
    */
 
+  // Revisa si una línea está comleta. Si hay algún cero en alguna parte de la
+  // línea,
+  // quiere decir que no está completa
   public boolean checkIfCleared(int row) {
     for (int j = 0; j < BOARD_WIDTH; j++) {
       if (this.board[row][j] == 0) {
@@ -31,17 +34,29 @@ public class Game {
 
   public void checkLineClears() {
     for (int i = BOARD_HEIGHT - 1; i >= 0; i--) {
+      // Empezando desde abajo, revisa si alguna línea está completa
       if (checkIfCleared(i)) {
-        for (int clearedLine = i; clearedLine > 0; clearedLine--) {
-          for (int j = 0; j < BOARD_WIDTH; j++) {
+        // Si si está, va uno por uno copiando el valor de la línea de arriba de la
+        // actual, y cuando llega a la última, la vuelve toda ceros
+        removeFullRow(i);
+        i = BOARD_HEIGHT;
+      }
+      System.out.println("Board being checked: ");
+      Clock.INSTANCE.printIntMatrix(this.board);
 
-            this.board[clearedLine][j] = this.board[clearedLine - 1][j];
-          }
+      System.out.println("i se revisó para los valores: " + i);
+    }
+  }
 
-        }
-        for (int j = 0; j < BOARD_WIDTH; j++) {
-          this.board[0][j] = 0;
-        }
+  public void removeFullRow(int fullRow) {
+    for (int currentRow = fullRow; currentRow > 0; currentRow--) {
+      for (int j = 0; j < BOARD_WIDTH; j++) {
+
+        this.board[currentRow][j] = this.board[currentRow - 1][j];
+      }
+      for (int j = 0; j < BOARD_WIDTH; j++) {
+        this.board[0][j] = 0;
+
       }
     }
   }
@@ -121,11 +136,24 @@ public class Game {
     }
   }
 
+  public void pieceRotate() {
+    int[][] rotation = this.currentPiece.getNextRotation();
+    if (canBeDrawn(this.currentPiece.row, this.currentPiece.col, rotation)) {
+      this.currentPiece.shape = rotation;
+      drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
+    } else {
+      drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
+    }
+
+  }
+
   public void movePiece(int plusrow, int pluscol) {
     int targetRow = this.currentPiece.row + plusrow;
     int targetCol = this.currentPiece.col + pluscol;
     if (canBeDrawn(targetRow, targetCol, this.currentPiece.shape)) {
       drawCurrentPiece(targetRow, targetCol);
+    } else {
+      drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
     }
   }
 

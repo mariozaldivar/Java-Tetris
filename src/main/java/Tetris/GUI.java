@@ -92,6 +92,8 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
         case KeyCode.S:
           Update.movePiece(1, 0);
           break;
+        case KeyCode.W:
+          Update.pieceRotate();
         default:
           System.out.println("El usuario o presionó la tecla: " + event.getText());
           break;
@@ -101,12 +103,12 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
 
   public class UpdateTetris extends AnimationTimer {
     private long lastUpdate = 0;
-    private final long VelocidaddeCaida = 500_000_000; // 500ms
+    private final long VelocidaddeCaida = 500_000; // 500ms
 
     @Override
     public void handle(long now) {
+
       if (now - lastUpdate >= VelocidaddeCaida) {
-        Update.pieceFall();
         UpdateTablero();
         lastUpdate = now;
       }
@@ -123,6 +125,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
         Cellmap[rows][colums] = cell;
       }
     }
+
   }
 
   private void UpdateTablero() {
@@ -161,6 +164,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
       scene.setRoot(changeroot);
       if (ButtonName.equals("Iniciar")) {
         iniciar.start();
+        Clock.INSTANCE.startGame();
       }
     });
     button.setOnMouseReleased(mouseEvent -> {
