@@ -68,6 +68,8 @@ public class Game {
     // Antes de dibujar la nueva pieza, revisa si no hay nada en donde debería
     // dibujarse por default. En caso de que si, llama a GameOver
 
+    // Importante notar que CanBeDrawn elimina la pieza del tablero, pero no la
+    // redibuja
     if (canBeDrawn(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape)) {
       drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
     } else {
