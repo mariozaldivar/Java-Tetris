@@ -21,6 +21,14 @@ import java.util.Map;
 
 import static Tetris.Game.BOARD_HEIGHT;
 import static Tetris.Game.BOARD_WIDTH;
+/*
+* En javafx todos los elementos que se muestran en la pantalla son nodos y panes
+* Nodos: Son los elementos de la pantalla como un boton o texto
+* Pane: Son contenedores que determinan la posicion de los elementos de la GUI, hay multiples tipos de Panes,
+* pero lo unico que las diferencia es la forma en la que los objetos son ordenados.
+* Es posible poner un pane dentro de otro pane para poder crear layouts más complejos.
+*/
+
 
 public class GUI extends Application {
   Game updateGame = new Game();
@@ -108,24 +116,24 @@ public class GUI extends Application {
     configLayout.setAlignment(Pos.CENTER);
 
     int row = 0;
-    for (String keyName : keybinds.keySet()){
+    for (String keyName : keybinds.keySet()){ //Añade cada boton de la configuracion
       Label label = new Label(keyName);
       label.setStyle("-fx-font-size: 50px; -fx-text-fill: black; -fx-font-family:Sans Serif");
 
       Button button = new Button(keybinds.get(keyName).toString());
       button.setPrefSize(400,50);
-      button.setOnMouseClicked(event -> {
+      button.setOnMouseClicked(event -> { //El texto dentro del button cambia a ...
         button.requestFocus();
         button.setText("...");
 
-        button.focusedProperty().addListener((ObservableValue,OldValue,NewValue) ->{
+        button.focusedProperty().addListener((ObservableValue,OldValue,NewValue) ->{ //Cuando seleccionas un nuevo boton o haces click en otro lugar de la pantalla el boton regresa a su estado original
           if (!NewValue){
             button.setText(keybinds.get(keyName).toString());
             button.setOnKeyPressed(null);
           }
         });
 
-        button.setOnKeyPressed(e -> {
+        button.setOnKeyPressed(e -> { //Coloca la nueva tecla a la accion deseada
           KeyCode currentkey = e.getCode();
           if (currentkey == KeyCode.ESCAPE){
             button.setText(keybinds.get(keyName).toString());
@@ -158,7 +166,6 @@ public class GUI extends Application {
 
   public void start(Stage currentScene) throws Exception {
     //Menu principal
-
 
     BorderPane menuPrincipal = new BorderPane();
     BorderPane menuJuego = new BorderPane();
@@ -199,7 +206,7 @@ public class GUI extends Application {
     keybinds.put("Right",KeyCode.RIGHT);
     keybinds.put("Soft drop", KeyCode.DOWN);
     keybinds.put("Hard drop", KeyCode.SPACE);
-    keybinds.put("Rotate clockwise", KeyCode.X);
+    keybinds.put("Rotate", KeyCode.X);
     keybinds.put("Rotate Counterclockwise", KeyCode.Z);
     keybinds.put("rotate 180",KeyCode.A);
     keybinds.put("Hold",KeyCode.C);
@@ -214,7 +221,7 @@ public class GUI extends Application {
 
     scrollConfig.setContent(ConfigUI);
     scrollConfig.setFitToWidth(true);
-    scrollConfig.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollConfig.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); //Evita el scroll horizontal
     scrollConfig.setStyle("-fx-background-color:transparent; -fx-background: transparent;");
     smoothScroll(scrollConfig);
 
@@ -240,7 +247,7 @@ public class GUI extends Application {
       KeyCode currentKey = event.getCode();
       System.out.println(event.getCharacter());
       String curkey = "";
-      for (Map.Entry<String, KeyCode> keybind : keybinds.entrySet()){
+      for (Map.Entry<String, KeyCode> keybind : keybinds.entrySet()){ //Obtienes el nombre de la tecla presionada
         if(keybind.getValue() == currentKey){
           curkey = keybind.getKey();
           break;
@@ -251,12 +258,13 @@ public class GUI extends Application {
         case "Left" -> updateGame.movePiece(0,-1);
         case "Right" -> updateGame.movePiece(0,1);
         case "Hard drop" -> updateGame.hardDrop();
+        case "Rotate" -> updateGame.pieceRotate();
         default -> System.out.println("Se ha presionado la tecla" + currentKey);
       }
     });
   }
 
-  private void smoothScroll(ScrollPane scrollPane){
+  private void smoothScroll(ScrollPane scrollPane){ //Hace que el scroll sea más suave
     double scrollSpeed = 0.1; //Duracion del scroll en s
 
     scrollPane.getContent().setOnScroll(event -> {
