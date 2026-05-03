@@ -2,8 +2,10 @@ package Tetris;
 
 import javafx.animation.*;
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -43,18 +45,22 @@ public class GUI extends Application {
   //Configuracion del tablero
   private void CrearTablero(){
     Tablero.setAlignment(Pos.CENTER);
+    Tablero.setMaxSize(Region.USE_PREF_SIZE,Region.USE_PREF_SIZE);
     for (int rows = 0; rows < BOARD_HEIGHT; rows++){
       for (int colums = 0; colums < BOARD_WIDTH; colums++){
         Rectangle Cell = new Rectangle(cellWidht,cellHeight);
         if (rows < 2){
           Cell.setOpacity(.20);
           Cell.setStroke(Color.BLACK);
+          Cell.setStrokeWidth(1);
         }
         Tablero.add(Cell,colums,rows);
         Cellmap[rows][colums] = Cell;
-        Cell.setStroke(Color.LIGHTBLUE);
+        Cell.setStroke(Color.BLACK);
+        Cell.setStrokeWidth(1);
       }
     }
+    Tablero.setStyle("-fx-border-color: #808080; -fx-border-width: 5px; -fx-border-style: solid;");
   }
 
   private void updateTablero(){
@@ -226,7 +232,6 @@ public class GUI extends Application {
     smoothScroll(scrollConfig);
 
     //Juego
-
     VBox tableroDerecho = new VBox();
     VBox tableroIzquierdo = new VBox();
 
