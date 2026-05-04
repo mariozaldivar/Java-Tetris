@@ -142,6 +142,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
 
   private static Color setColor(int currentcell) {
     return switch (currentcell) {
+      case 0 -> Color.WHITE;
       case 1 -> Color.RED;
       case 2 -> Color.PALETURQUOISE;
       case 3 -> Color.BLUE;
@@ -149,7 +150,7 @@ public class GUI extends Application { // GUI quiere decir Graphical User Interf
       case 5 -> Color.YELLOW;
       case 6 -> Color.ANTIQUEWHITE;
       case 7 -> Color.SALMON;
-      default -> Color.WHITE;
+      default -> Color.GREY;
     };
   }
 

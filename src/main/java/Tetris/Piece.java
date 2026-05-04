@@ -76,7 +76,7 @@ public class Piece {
     int[][] buffer = new int[this.size][this.size];
     for (int i = 0; i < this.size; i++) {
       for (int j = 0; j < this.size; j++) {
-        buffer[i][j] = this.shape[j][(this.size - 1) - i];
+        buffer[i][j] = this.shape[(this.size - 1) - j][i];
       }
     }
     return buffer;
