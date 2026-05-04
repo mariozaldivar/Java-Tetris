@@ -71,7 +71,7 @@ public class Game {
 
     // Importante notar que CanBeDrawn elimina la pieza del tablero, pero no la
     // redibuja
-    if (canBeDrawn(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape)) {
+    if (canBeDrawnWithoutUndrawing(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape)) {
       drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
       calculateGhostPiece();
     } else {
@@ -95,6 +95,29 @@ public class Game {
   public boolean canBeDrawn(int row, int col, int[][] shape) {
     System.out.println("Se está checando si se puede dibujar en, row: " + row + "  col: " + col);
     undrawPiece(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape);
+    int pieceSize = this.currentPiece.size;
+    for (int i = 0; i < pieceSize; i++) {
+      for (int j = 0; j < pieceSize; j++) {
+        if (shape[i][j] != 0) {
+          // inBounds es un solo valor booleano que verifica que el row y col dado estén
+          // dentro del tablero
+          boolean inBounds = ((row + i) >= 0 && (row + i) < BOARD_HEIGHT && (col + j) >= 0 && (col + j) < BOARD_WIDTH);
+          if (inBounds) {
+            if (shape[i][j] != 0 && this.board[row + i][col + j] > 0) {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+
+  }
+
+  public boolean canBeDrawnWithoutUndrawing(int row, int col, int[][] shape) {
+
     int pieceSize = this.currentPiece.size;
     for (int i = 0; i < pieceSize; i++) {
       for (int j = 0; j < pieceSize; j++) {
