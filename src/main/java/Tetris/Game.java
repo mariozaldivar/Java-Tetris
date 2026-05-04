@@ -6,6 +6,7 @@ public class Game {
   public int[][] board = new int[BOARD_HEIGHT][BOARD_WIDTH]; // Declara un board 10x20 (con 2 de overhead) y lo
                                                              // inicializa en 0s
   public Piece currentPiece = new Piece();
+  public GhostPiece ghostPiece = new GhostPiece();
 
   /*
    * Cosas necesarias para entender este script:
@@ -25,7 +26,7 @@ public class Game {
   // quiere decir que no está completa
   public boolean checkIfCleared(int row) {
     for (int j = 0; j < BOARD_WIDTH; j++) {
-      if (this.board[row][j] == 0) {
+      if (this.board[row][j] <= 0) {
         return false;
       }
     }
@@ -72,18 +73,19 @@ public class Game {
     // redibuja
     if (canBeDrawn(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape)) {
       drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
+      calculateGhostPiece();
     } else {
       System.out.println("Esta pieza tiene una pieza debajo");
       GameOver();
     }
   }
 
-  public void undrawCurrentPiece() {
-    int pieceSize = this.currentPiece.size;
+  public void undrawPiece(int row, int col, int[][] shape) {
+    int pieceSize = shape.length;
     for (int i = 0; i < pieceSize; i++) {
       for (int j = 0; j < pieceSize; j++) {
-        if (this.currentPiece.shape[i][j] != 0) {
-          this.board[currentPiece.row + i][currentPiece.col + j] = 0;
+        if (shape[i][j] != 0 && this.board[row + i][col + j] == shape[i][j]) {
+          this.board[row + i][col + j] = 0;
         }
       }
     }
@@ -92,7 +94,7 @@ public class Game {
 
   public boolean canBeDrawn(int row, int col, int[][] shape) {
     System.out.println("Se está checando si se puede dibujar en, row: " + row + "  col: " + col);
-    undrawCurrentPiece();
+    undrawPiece(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape);
     int pieceSize = this.currentPiece.size;
     for (int i = 0; i < pieceSize; i++) {
       for (int j = 0; j < pieceSize; j++) {
@@ -101,7 +103,7 @@ public class Game {
           // dentro del tablero
           boolean inBounds = ((row + i) >= 0 && (row + i) < BOARD_HEIGHT && (col + j) >= 0 && (col + j) < BOARD_WIDTH);
           if (inBounds) {
-            if (shape[i][j] != 0 && this.board[row + i][col + j] != 0) {
+            if (shape[i][j] != 0 && this.board[row + i][col + j] > 0) {
               return false;
             }
           } else {
@@ -111,6 +113,44 @@ public class Game {
       }
     }
     return true;
+
+  }
+
+  public boolean canGhostPieceBeDrawn(int row, int col, int[][] shape) {
+    int pieceSize = shape.length;
+    for (int i = 0; i < pieceSize; i++) {
+      for (int j = 0; j < pieceSize; j++) {
+        if (shape[i][j] != 0) {
+          // inBounds es un solo valor booleano que verifica que el row y col dado estén
+          // dentro del tablero
+          boolean inBounds = ((row + i) >= 0 && (row + i) < BOARD_HEIGHT && (col + j) >= 0 && (col + j) < BOARD_WIDTH);
+          if (inBounds) {
+            if (shape[i][j] != 0 && this.board[row + i][col + j] > 0) {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  public void calculateGhostPiece() {
+
+    undrawPiece(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape);
+    if (ghostPiece.shape != null) {
+
+      undrawPiece(this.ghostPiece.row, this.ghostPiece.col, this.ghostPiece.shape);
+    }
+
+    ghostPiece.makeGhostPiece(this.currentPiece);
+    while (canGhostPieceBeDrawn(this.ghostPiece.row + 1, this.ghostPiece.col, this.ghostPiece.shape)) {
+      this.ghostPiece.row++;
+    }
+    drawGhostPiece(this.ghostPiece.row, this.ghostPiece.col, this.ghostPiece.shape);
+    drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
 
   }
 
@@ -128,6 +168,18 @@ public class Game {
     this.currentPiece.drawn = true;
   }
 
+  public void drawGhostPiece(int row, int col, int[][] shape) {
+    this.ghostPiece.row = row;
+    this.ghostPiece.col = col;
+    for (int i = 0; i < this.ghostPiece.size; i++) {
+      for (int j = 0; j < this.ghostPiece.size; j++) {
+        if (this.ghostPiece.shape[i][j] != 0) {
+          this.board[row + i][col + j] = this.ghostPiece.shape[i][j];
+        }
+      }
+    }
+  }
+
   public void pieceFall() {
     if (canBeDrawn(this.currentPiece.row + 1, this.currentPiece.col, this.currentPiece.shape)) {
       drawCurrentPiece(this.currentPiece.row + 1, this.currentPiece.col);
@@ -143,6 +195,7 @@ public class Game {
     if (canBeDrawn(this.currentPiece.row, this.currentPiece.col, rotation)) {
       this.currentPiece.shape = rotation;
       drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
+      calculateGhostPiece();
     } else {
       drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
     }
@@ -154,6 +207,7 @@ public class Game {
     int targetCol = this.currentPiece.col + pluscol;
     if (canBeDrawn(targetRow, targetCol, this.currentPiece.shape)) {
       drawCurrentPiece(targetRow, targetCol);
+      calculateGhostPiece();
     } else {
       drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
     }
