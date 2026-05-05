@@ -82,6 +82,24 @@ public class Piece {
     return buffer;
   }
 
+  public void reset() {
+    this.size = this.shape.length;
+    this.drawn = false;
+    switch (this.shape.length) {
+      case 2:
+        this.col = 4;
+        break;
+      case 3:
+        this.col = 3;
+        break;
+      case 4:
+        this.col = 3;
+        break;
+    }
+    this.row = 0;
+
+  }
+
   public void main() {
 
     Clock.INSTANCE.printIntMatrix(this.shape);

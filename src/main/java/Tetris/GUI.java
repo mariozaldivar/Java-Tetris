@@ -261,6 +261,7 @@ public class GUI extends Application {
         case "Right" -> updateGame.movePiece(0, 1);
         case "Hard drop" -> updateGame.hardDrop();
         case "Rotate" -> updateGame.pieceRotate();
+        case "Hold" -> updateGame.holdPiece();
         default -> System.out.println("Se ha presionado la tecla" + currentKey);
       }
     });

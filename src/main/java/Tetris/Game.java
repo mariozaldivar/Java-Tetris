@@ -7,6 +7,8 @@ public class Game {
                                                              // inicializa en 0s
   public Piece currentPiece = new Piece();
   public GhostPiece ghostPiece = new GhostPiece();
+  public Piece holdPiece;
+  public boolean holdedThisTurn;
 
   /*
    * Cosas necesarias para entender este script:
@@ -78,6 +80,7 @@ public class Game {
       System.out.println("Esta pieza tiene una pieza debajo");
       GameOver();
     }
+    this.holdedThisTurn = false;
   }
 
   public void undrawPiece(int row, int col, int[][] shape) {
@@ -245,6 +248,40 @@ public class Game {
     // TODO: Aquí implementar chequeo de líneas
     getNewPiece();
 
+  }
+
+  public void holdPiece() {
+    if (!holdedThisTurn) {
+      if (this.holdPiece != null) {
+        Piece buffer;
+        buffer = this.currentPiece;
+        undrawPiece(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape);
+        this.currentPiece = this.holdPiece;
+
+        this.holdPiece = buffer;
+
+        this.currentPiece.reset();
+        this.holdPiece.reset();
+        drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
+        calculateGhostPiece();
+        holdedThisTurn = true;
+      } else {
+        undrawPiece(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape);
+        this.holdPiece = this.currentPiece;
+        this.holdPiece.reset();
+
+        this.currentPiece = new Piece();
+
+        if (canBeDrawnWithoutUndrawing(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape)) {
+          drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
+          calculateGhostPiece();
+          holdedThisTurn = true;
+        } else {
+          System.out.println("Esta pieza tiene una pieza debajo");
+          GameOver();
+        }
+      }
+    }
   }
 
   public void GameOver() {
