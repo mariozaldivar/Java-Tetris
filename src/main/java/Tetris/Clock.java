@@ -40,6 +40,7 @@ public enum Clock {
 
   public void unsubscribe(Runnable listener) {
     tickListeners.remove(listener);
+    System.out.println("Se intentó remover el listener " + listener.toString());
   }
 
   public void pauseGame() {
@@ -61,6 +62,7 @@ public enum Clock {
       return;
     } else {
       tickListeners.forEach(Runnable::run);
+      System.out.println("The suscribed listeners are: " + tickListeners.toString());
       // ForEach recorre toda la lista de funciones que hay en tickListeners
       // al ser una lista de objetos Runnable (ejecutables), por cada una, ejecuta su
       // atributo run

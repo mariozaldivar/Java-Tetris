@@ -286,12 +286,21 @@ public class Game {
 
   public void GameOver() {
     System.out.println("GAME IS SUPPOSED TO BE OVER!!!!!");
+
     Clock.INSTANCE.unsubscribe(this::pieceFall);
+    Clock.INSTANCE.gameOver();
 
   }
 
   public int[][] getBoardState() {
     return Clock.INSTANCE.copyIntMatrix(this.board);
+  }
+
+  public void startGame() {
+    this.board = new int[BOARD_HEIGHT][BOARD_WIDTH];
+    this.holdPiece = null;
+    getNewPiece();
+    Clock.INSTANCE.suscribe(this::pieceFall);
   }
 
   Game() {
