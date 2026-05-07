@@ -41,6 +41,8 @@ import static Tetris.Game.BOARD_WIDTH;
 //Hacer el retry y gameover en la gui
 //Reset keybinds -
 //hacer que las letras salten en los menus  y que el texto de la tecla ya usada escrollee en el boton -
+//Hacer que se muestren las siguientes piesas
+//
 
 public class GUI extends Application {
 
@@ -187,9 +189,25 @@ public class GUI extends Application {
     keybindsUI.setAlignment(Pos.CENTER);
   }
 
-  private void showHoldPiece() {
-    GridPane holdPiece = new GridPane();
+  private void showHoldPiece(GridPane HoldPiece) {
+    HoldPiece.getChildren().clear();
+    int[][] holdPieceMatrix = updateGame.holdPiece.shape;
+    int holdPieceSize = updateGame.holdPiece.size;
 
+    int offset = (4 - holdPieceSize)/2;
+
+    for(int rows = 0; rows < holdPieceSize; rows++){
+      for (int colums = 0; colums < holdPieceSize; colums++){
+        int currentRectangle =  holdPieceMatrix[rows][colums];
+        if (currentRectangle > 0){
+          Rectangle rect = new  Rectangle(cellWidht,cellHeight);
+          rect.setFill(setColor(currentRectangle));
+
+          HoldPiece.add(rect,colums + offset,rows  + offset);
+        }
+
+      }
+    }
   }
 
   private void resetKeybinds(VBox keybindsUI, Map<String, KeyCode> keybinds){
@@ -279,6 +297,30 @@ public class GUI extends Application {
     //Juego
     VBox tableroDerecho = new VBox();
     VBox tableroIzquierdo = new VBox();
+    GridPane HoldPiece = new GridPane();
+
+    BorderPane posicionHold = new BorderPane();
+
+
+    for (int i = 0; i <4; i++){
+      HoldPiece.getColumnConstraints().add( new ColumnConstraints(cellWidht));
+      HoldPiece.getRowConstraints().add(new RowConstraints(cellHeight));
+    }
+    HoldPiece.setAlignment(Pos.CENTER_RIGHT);
+    HoldPiece.setPrefSize((cellWidht*4),(cellHeight*4));
+
+
+    tableroIzquierdo.setAlignment(Pos.CENTER);
+    tableroIzquierdo.setPadding(new Insets(20));
+    tableroIzquierdo .setPrefWidth(0);
+
+    Label holdLabel =  new Label("HOLD");
+    holdLabel.setFont(textoBotones);
+    tableroIzquierdo.getChildren().addAll(holdLabel,HoldPiece);
+    posicionHold.setRight(tableroIzquierdo);
+    menuJuego.setLeft(posicionHold);
+
+
 
     CrearTablero();
     menuJuego.setCenter(Tablero);
@@ -306,6 +348,10 @@ public class GUI extends Application {
         case "Right" -> updateGame.movePiece(0,1);
         case "Hard drop" -> updateGame.hardDrop();
         case "Rotate" -> updateGame.pieceRotate();
+        case "Hold" -> {
+                updateGame.holdPiece();
+                showHoldPiece(HoldPiece);
+        }
         default -> System.out.println("Se ha presionado la tecla" + currentKey);
       }
     });
