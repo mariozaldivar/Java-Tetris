@@ -18,7 +18,7 @@ public enum Clock {
   INSTANCE;
 
   public boolean playing = true;
-  private boolean isPaused = false;
+  public boolean isPaused = false;
   private long speed = 500; // Es la velocidad con la que se actualiza el tick
   private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
   // Esta clase crea un scheduler, que se encarga de ejecutar automáticamente una
@@ -45,10 +45,12 @@ public enum Clock {
 
   public void pauseGame() {
     isPaused = true;
+    playing = false;
   }
 
   public void unpauseGame() {
     isPaused = false;
+    this.playing = true;
   }
 
   public void gameOver() {
