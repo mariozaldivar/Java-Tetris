@@ -1,10 +1,10 @@
-org/openjfx/SystemInfo.class
-module-info.class
 Tetris/Piece.class
-Tetris/Clock.class
-Tetris/Game.class
-Tetris/GUI$UpdateTetris.class
 org/openjfx/App.class
-Tetris/GhostPiece.class
 Tetris/GUI$1.class
 Tetris/GUI.class
+Tetris/Main.class
+org/openjfx/SystemInfo.class
+module-info.class
+Tetris/Clock.class
+Tetris/Game.class
+Tetris/GhostPiece.class
