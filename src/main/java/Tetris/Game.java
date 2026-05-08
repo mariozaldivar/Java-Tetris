@@ -258,7 +258,6 @@ public class Game {
       this.currentPiece.row++;
     }
     drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
-    // TODO: Aquí implementar chequeo de líneas
     getNewPiece();
 
   }
@@ -312,13 +311,21 @@ public class Game {
   }
 
   public void startGame() {
-    this.board = new int[BOARD_HEIGHT][BOARD_WIDTH];
+    Clock.INSTANCE.clearLastGame();
+    for (int i = 0; i < BOARD_HEIGHT; i++) {
+      for (int j = 0; j < BOARD_WIDTH; j++) {
+        this.board[i][j] = 0;
+      }
+    }
+    this.currentPiece.reset();
     this.holdPiece = null;
     getNewPiece();
-    Clock.INSTANCE.suscribe(this::pieceFall);
+
+    // Encontrar una mejor maner en otro momento
+    if (Clock.INSTANCE.tickListeners.size() == 0) {
+      Clock.INSTANCE.suscribe(this::pieceFall);
+    }
+    Clock.INSTANCE.startGame();
   }
 
-  Game() {
-    startGame();
-  }
 }

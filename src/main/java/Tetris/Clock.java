@@ -31,7 +31,7 @@ public enum Clock {
   // hay un tick
   // es necesario cancelar el proceso anterior, entonces con esta variable
   // mantenemos el acceso
-  private final List<Runnable> tickListeners = new ArrayList<>();
+  public final List<Runnable> tickListeners = new ArrayList<>();
   // Lista con todos los métodos suscritos al evento Tick();
 
   public void suscribe(Runnable listener) { // Método para suscribir y almacenar métodos al evento
@@ -75,14 +75,20 @@ public enum Clock {
     if (currentTickTask != null && !currentTickTask.isCancelled()) {
       currentTickTask.cancel(false); // Revisa el anterior "proceso" del scheduler, y si existe todavía, lo cancela
     }
-    currentTickTask = scheduler.scheduleAtFixedRate(this::tick, 0, newSpeed, TimeUnit.MILLISECONDS);
+    this.currentTickTask = scheduler.scheduleAtFixedRate(this::tick, 0, newSpeed, TimeUnit.MILLISECONDS);
   }
 
   public void startGame() {// Esta función utiliza el método updateClockSpeed para crear el primer proceso
 
-    updateClockSpeed(speed);
+    updateClockSpeed(this.speed);
     playing = true;
     isPaused = false;
+  }
+
+  public void clearLastGame() {
+    if (currentTickTask != null && !currentTickTask.isCancelled()) {
+      currentTickTask.cancel(false); // Revisa el anterior "proceso" del scheduler, y si existe todavía, lo cancela
+    }
   }
 
   // Funciones que son útiles generalmente

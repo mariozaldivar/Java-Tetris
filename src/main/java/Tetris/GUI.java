@@ -135,6 +135,7 @@ public class GUI extends Application {
         System.out.println("Se ha presionado " + nombre);
         updateTableroTetris();
         Clock.INSTANCE.startGame();
+        updateGame.startGame();
       } else if (nombre.equals("CONFIG")) {
         System.out.println("Config");
 
@@ -223,7 +224,6 @@ public class GUI extends Application {
     }
   }
 
-
   private void resetKeybinds(VBox keybindsUI, Map<String, KeyCode> keybinds) {
 
   }
@@ -248,7 +248,6 @@ public class GUI extends Application {
     this.pauseWindow.setManaged(false);
   }
 
-
   private void toggleVisibility() {
     if (this.pauseWindow.isVisible()) {
       this.pauseWindow.setVisible(false);
@@ -260,8 +259,10 @@ public class GUI extends Application {
 
   private void togglePause() {
     if (Clock.INSTANCE.isPaused) {
-      this.pauseWindow.setVisible(true); this.pauseWindow.setManaged(true);
-      this.fondoPausa.setVisible(true); this.fondoPausa.setManaged(false);
+      this.pauseWindow.setVisible(true);
+      this.pauseWindow.setManaged(true);
+      this.fondoPausa.setVisible(true);
+      this.fondoPausa.setManaged(false);
 
       this.continueButton.setOnMouseClicked(event -> {
         this.continueButton.setStyle("-fx-background-color: #3ac129;");
@@ -329,8 +330,8 @@ public class GUI extends Application {
     tituloMenuPrincipal.setFill(Color.WHITE);
     tituloMenuPrincipal.setFont(tetrisfontTitulo);
 
-    setupMenuButton(iniciarJuego,  layoutMenujuego, "INICIAR", textoBotones);
-    setupMenuButton(Configuracion,  layoutConfig, "CONFIG", textoBotones);
+    setupMenuButton(iniciarJuego, layoutMenujuego, "INICIAR", textoBotones);
+    setupMenuButton(Configuracion, layoutConfig, "CONFIG", textoBotones);
 
     botonesInicio.getChildren().addAll(tituloMenuPrincipal, iniciarJuego, Configuracion);
     botonesInicio.setSpacing(20);
@@ -366,7 +367,7 @@ public class GUI extends Application {
     menuConfiguracion.setBottom(back);
     menuConfiguracion.setCenter(scrollConfig);
 
-    layoutConfig.getChildren().add(menuConfiguracion );
+    layoutConfig.getChildren().add(menuConfiguracion);
 
     scrollConfig.setContent(ConfigUI);
     scrollConfig.setFitToWidth(true);
@@ -375,7 +376,6 @@ public class GUI extends Application {
     smoothScroll(scrollConfig);
 
     // Juego
-
 
     VBox tableroDerecho = new VBox();
     VBox tableroIzquierdo = new VBox();
@@ -429,17 +429,12 @@ public class GUI extends Application {
 
     createPauseMenu(tetrisfontTitulo);
 
-    layoutMenujuego.getChildren().addAll(menuJuego, this.fondoPausa,this.pauseWindow);
-
-
+    layoutMenujuego.getChildren().addAll(menuJuego, this.fondoPausa, this.pauseWindow);
 
     currentScene.setTitle("Tetris");
     currentScene.setScene(this.pantallaTetris);
     currentScene.setMaximized(true);
     currentScene.show();
-
-
-
 
     this.pantallaTetris.setOnKeyPressed(event -> {
 
@@ -470,7 +465,7 @@ public class GUI extends Application {
           }
           default -> System.out.println("Se ha presionado la tecla" + currentKey);
         }
-      } else if (Clock.INSTANCE.isPaused)  {
+      } else if (Clock.INSTANCE.isPaused) {
         if (curkey.equals("Pause")) {
           Clock.INSTANCE.unpauseGame();
           togglePause();
