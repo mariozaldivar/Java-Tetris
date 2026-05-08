@@ -2,10 +2,8 @@ package Tetris;
 
 import javafx.animation.*;
 import javafx.application.Application;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,23 +21,27 @@ import java.util.Map;
 
 import static Tetris.Game.BOARD_HEIGHT;
 import static Tetris.Game.BOARD_WIDTH;
-/*
-* En javafx todos los elementos que se muestran en la pantalla son nodos y panes
-* Nodos: Son los elementos de la pantalla como un boton o texto
-* Pane: Son contenedores que determinan la posicion de los elementos de la GUI, hay multiples tipos de Panes,
-* pero lo unico que las diferencia es la forma en la que los objetos son ordenados.
-* Es posible poner un pane dentro de otro pane para poder crear layouts más complejos.
-*/
 
 public class GUI extends Application {
-  Game updateGame = new Game();
+
+  // Instancia del juego. GUI la usa para leer el tablero y el puntaje.
+  // [PUNTUACIÓN] Al no existir ScoreManager, Game() ya no recibe parámetros.
+  private Game updateGame = new Game();
+
+  // ════════════════════════════════════════════════
+  // [PUNTUACIÓN - LUGAR 4] Labels de puntuación como atributos de la clase.
+  // Viven aquí para que tanto start() (donde se crean visualmente)
+  // como updateTableroTetris() (donde se actualizan) puedan accederlos.
+  // ════════════════════════════════════════════════
+  private Label scoreLabel = new Label("0");
+  private Label levelLabel = new Label("1");
+  // ════════════════════════════════════════════════
 
   private static final int cellWidht = 30;
   private static final int cellHeight = 30;
   GridPane Tablero = new GridPane();
   Node[][] Cellmap = new Node[BOARD_HEIGHT][BOARD_WIDTH];
 
-  // Configuracion del tablero
   private void CrearTablero() {
     Tablero.setAlignment(Pos.CENTER);
     Tablero.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
@@ -67,7 +69,6 @@ public class GUI extends Application {
         Rectangle currentCell = (Rectangle) Cellmap[rows][colums];
         int numeroCelda = tableroActual[rows][colums];
         currentCell.setFill(setColor(numeroCelda));
-
       }
     }
   }
@@ -86,7 +87,6 @@ public class GUI extends Application {
     };
   }
 
-  // Botones
   private void hoverOverButton(Button button) {
     button.setPrefSize(400, 75);
     button.setOnMouseEntered(event -> button.setStyle("-fx-background-color: #22bfa1;"));
@@ -105,7 +105,6 @@ public class GUI extends Application {
         Clock.INSTANCE.startGame();
       } else if (nombre.equals("CONFIG")) {
         System.out.println("Config");
-        //
       }
     });
     button.setOnMouseReleased(event -> button.setStyle("-fx-background-color: #ffffff;"));
@@ -120,27 +119,24 @@ public class GUI extends Application {
     configLayout.setAlignment(Pos.CENTER);
 
     int row = 0;
-    for (String keyName : keybinds.keySet()) { // Añade cada boton de la configuracion
+    for (String keyName : keybinds.keySet()) {
       Label label = new Label(keyName);
       label.setStyle("-fx-font-size: 50px; -fx-text-fill: black; -fx-font-family:Sans Serif");
 
       Button button = new Button(keybinds.get(keyName).toString());
       button.setPrefSize(400, 50);
-      button.setOnMouseClicked(event -> { // El texto dentro del button cambia a ...
+      button.setOnMouseClicked(event -> {
         button.requestFocus();
         button.setText("...");
 
-        button.focusedProperty().addListener((ObservableValue, OldValue, NewValue) -> { // Cuando seleccionas un nuevo
-                                                                                        // boton o haces click en otro
-                                                                                        // lugar de la pantalla el boton
-                                                                                        // regresa a su estado original
+        button.focusedProperty().addListener((ObservableValue, OldValue, NewValue) -> {
           if (!NewValue) {
             button.setText(keybinds.get(keyName).toString());
             button.setOnKeyPressed(null);
           }
         });
 
-        button.setOnKeyPressed(e -> { // Coloca la nueva tecla a la accion deseada
+        button.setOnKeyPressed(e -> {
           KeyCode currentkey = e.getCode();
           if (currentkey == KeyCode.ESCAPE) {
             button.setText(keybinds.get(keyName).toString());
@@ -167,13 +163,7 @@ public class GUI extends Application {
     keybindsUI.setAlignment(Pos.CENTER);
   }
 
-  private void resetKeybinds(VBox keybindsUI, Map<String, KeyCode> keybinds) {
-
-  }
-
   public void start(Stage currentScene) throws Exception {
-    // Menu principal
-
     BorderPane menuPrincipal = new BorderPane();
     BorderPane menuJuego = new BorderPane();
     BorderPane menuConfiguracion = new BorderPane();
@@ -183,22 +173,48 @@ public class GUI extends Application {
     Scene pantallaTetris = new Scene(menuPrincipal, Color.WHITE);
 
     VBox botonesInicio = new VBox();
-
     Button iniciarJuego = new Button();
     Button Configuracion = new Button();
     Text tituloMenuPrincipal = new Text("TETRIS");
-
     tituloMenuPrincipal.setFont(new Font("Impact", 100));
+
+    // Configuración del tablero de juego
+    CrearTablero();
+    menuJuego.setCenter(Tablero);
+    BorderPane.setAlignment(Tablero, Pos.CENTER);
+
+    // ════════════════════════════════════════════════
+    // [PUNTUACIÓN - LUGAR 4 continuación] Panel visual de puntuación.
+    // Se construye aquí en start() y se coloca a la derecha del tablero.
+    // scoreLabel y levelLabel ya están declarados arriba como atributos,
+    // así que updateTableroTetris() puede modificarlos sin problema.
+    // ════════════════════════════════════════════════
+    VBox panelPuntos = new VBox(10);
+
+    Text txtPuntos = new Text("PUNTUACIÓN:");
+    txtPuntos.setFont(new Font("Impact", 20));
+    scoreLabel.setFont(new Font("Impact", 35));
+    scoreLabel.setTextFill(Color.DARKBLUE);
+
+    Text txtLevel = new Text("NIVEL:");
+    txtLevel.setFont(new Font("Impact", 20));
+    levelLabel.setFont(new Font("Impact", 30));
+
+    panelPuntos.getChildren().addAll(txtPuntos, scoreLabel, txtLevel, levelLabel);
+    panelPuntos.setAlignment(Pos.TOP_LEFT);
+    panelPuntos.setPadding(new Insets(50, 20, 0, 20));
+
+    // Se coloca el panel a la derecha del tablero de juego
+    menuJuego.setRight(panelPuntos);
+    // ════════════════════════════════════════════════
 
     setupMenuButton(iniciarJuego, pantallaTetris, menuJuego, "INICIAR");
     setupMenuButton(Configuracion, pantallaTetris, menuConfiguracion, "CONFIG");
 
     botonesInicio.getChildren().addAll(tituloMenuPrincipal, iniciarJuego, Configuracion);
-
     menuPrincipal.setCenter(botonesInicio);
     botonesInicio.setAlignment(Pos.CENTER);
 
-    // Configuracion
     VBox ConfigUI = new VBox();
     ConfigUI.setAlignment(Pos.CENTER);
     ConfigUI.setSpacing(20);
@@ -224,58 +240,45 @@ public class GUI extends Application {
 
     menuConfiguracion.setBottom(back);
     menuConfiguracion.setCenter(scrollConfig);
-
     scrollConfig.setContent(ConfigUI);
     scrollConfig.setFitToWidth(true);
-    scrollConfig.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Evita el scroll horizontal
+    scrollConfig.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollConfig.setStyle("-fx-background-color:transparent; -fx-background: transparent;");
     smoothScroll(scrollConfig);
 
-    // Juego
-    VBox tableroDerecho = new VBox();
-    VBox tableroIzquierdo = new VBox();
-
-    CrearTablero();
-    menuJuego.setCenter(Tablero);
-    BorderPane.setAlignment(Tablero, Pos.CENTER);
-
-    currentScene.setTitle("Tetris");
-    currentScene.setScene(pantallaTetris);
-    currentScene.setMaximized(true);
-    currentScene.show();
-
     pantallaTetris.setOnKeyPressed(event -> {
-
       KeyCode currentKey = event.getCode();
       System.out.println(event.getCharacter());
       String curkey = "";
-      for (Map.Entry<String, KeyCode> keybind : keybinds.entrySet()) { // Obtienes el nombre de la tecla presionada
+      for (Map.Entry<String, KeyCode> keybind : keybinds.entrySet()) {
         if (keybind.getValue() == currentKey) {
           curkey = keybind.getKey();
           break;
         }
       }
-
       switch (curkey) {
-        case "Left" -> updateGame.movePiece(0, -1);
-        case "Right" -> updateGame.movePiece(0, 1);
+        case "Left"      -> updateGame.movePiece(0, -1);
+        case "Right"     -> updateGame.movePiece(0, 1);
         case "Hard drop" -> updateGame.hardDrop();
-        case "Rotate" -> updateGame.pieceRotate();
+        case "Rotate"    -> updateGame.pieceRotate();
         default -> System.out.println("Se ha presionado la tecla" + currentKey);
       }
     });
+
+    currentScene.setTitle("Tetris");
+    currentScene.setScene(pantallaTetris);
+    currentScene.setMaximized(true);
+    currentScene.show();
   }
 
-  private void smoothScroll(ScrollPane scrollPane) { // Hace que el scroll sea más suave
-    double scrollSpeed = 0.1; // Duracion del scroll en s
-
+  private void smoothScroll(ScrollPane scrollPane) {
+    double scrollSpeed = 0.1;
     scrollPane.getContent().setOnScroll(event -> {
       double deltaY = event.getDeltaY() * scrollSpeed;
       double target = scrollPane.getVvalue() - deltaY;
-
       Timeline timeline = new Timeline();
-      KeyValue keyValue = new KeyValue(scrollPane.vvalueProperty(), Math.max(0, Math.min(1, target)),
-          Interpolator.EASE_OUT);
+      KeyValue keyValue = new KeyValue(scrollPane.vvalueProperty(),
+              Math.max(0, Math.min(1, target)), Interpolator.EASE_OUT);
       KeyFrame kf = new KeyFrame(Duration.millis(200), keyValue);
       timeline.getKeyFrames().add(kf);
       timeline.play();
@@ -291,12 +294,19 @@ public class GUI extends Application {
       @Override
       public void handle(long now) {
         if (now - lastUpdate >= velocidadDeCaida) {
-          updateTablero();
+          updateTablero(); // Dibuja el estado actual del tablero
+
+          // ════════════════════════════════════════════════
+          // [PUNTUACIÓN - LUGAR 5] Aquí se refrescan los labels en cada frame.
+          // Se leen directamente de los getters de Game, que son los que
+          // saben el puntaje y nivel reales en ese momento.
+          // ════════════════════════════════════════════════
+          scoreLabel.setText(String.valueOf(updateGame.getScore()));
+          levelLabel.setText(String.valueOf(updateGame.getLevel()));
+          // ════════════════════════════════════════════════
+
           lastUpdate = now;
         }
       }
-
     }.start();
-  }
-
-}
+  }}
