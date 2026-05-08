@@ -55,9 +55,17 @@ public class GUI extends Application {
   Node[][] Cellmap = new Node[BOARD_HEIGHT][BOARD_WIDTH];
 
   VBox pauseWindow;
+  Rectangle fondoPausa;
+  Button continueButton;
+  Button restartButton;
+  Button exitButton;
+  GridPane HoldPiece;
+  Scene pantallaTetris;
+  StackPane rootcontainer;
 
   // Configuracion del tablero
   private void CrearTablero() {
+    Tablero.getChildren().clear();
     Tablero.setAlignment(Pos.CENTER);
     Tablero.setMaxSize(BOARD_WIDTH, BOARD_HEIGHT);
     for (int rows = 0; rows < BOARD_HEIGHT; rows++) {
@@ -89,6 +97,11 @@ public class GUI extends Application {
     }
   }
 
+  private void resetTablero() {
+    Tablero.getChildren().clear();
+    CrearTablero();
+  }
+
   private static Color setColor(int numeroCelda) {
     return switch (numeroCelda) {
       case 0 -> Color.WHITE;
@@ -97,7 +110,7 @@ public class GUI extends Application {
       case 3 -> Color.BLUE;
       case 4 -> Color.GREEN;
       case 5 -> Color.YELLOW;
-      case 6 -> Color.ANTIQUEWHITE;
+      case 6 -> Color.ORANGE;
       case 7 -> Color.SALMON;
       default -> Color.GREY;
     };
@@ -110,18 +123,13 @@ public class GUI extends Application {
     button.setOnMouseExited(event -> button.setStyle("-fx-background-color: #ffffff;"));
   }
 
-  private void setupMenuButton(Button button, Scene tetris, BorderPane cambiarEscena, String nombre, Font font,
-      Parent escenaAnterior) {
+  private void setupMenuButton(Button button, StackPane cambiarEscena, String nombre, Font font) {
     button.setFont(font);
     button.setText(nombre);
     hoverOverButton(button);
     button.setOnMouseClicked(event -> {
       button.setStyle("-fx-background-color: #3ac129;");
-      if (nombre.equals("BACK")) {
-        tetris.setRoot(escenaAnterior);
-      } else {
-        tetris.setRoot(cambiarEscena);
-      }
+      this.pantallaTetris.setRoot(cambiarEscena);
 
       if (nombre.equals("INICIAR")) {
         System.out.println("Se ha presionado " + nombre);
@@ -194,8 +202,8 @@ public class GUI extends Application {
     keybindsUI.setAlignment(Pos.CENTER);
   }
 
-  private void showHoldPiece(GridPane HoldPiece) {
-    HoldPiece.getChildren().clear();
+  private void showHoldPiece() {
+    this.HoldPiece.getChildren().clear();
     int[][] holdPieceMatrix = updateGame.holdPiece.shape;
     int holdPieceSize = updateGame.holdPiece.size;
 
@@ -208,29 +216,80 @@ public class GUI extends Application {
           Rectangle rect = new Rectangle(cellWidht, cellHeight);
           rect.setFill(setColor(currentRectangle));
 
-          HoldPiece.add(rect, colums + offset, rows + offset);
+          this.HoldPiece.add(rect, colums + offset, rows + offset);
         }
 
       }
     }
   }
 
+
   private void resetKeybinds(VBox keybindsUI, Map<String, KeyCode> keybinds) {
 
   }
 
-  private void createPauseMenu() {
+  private void createPauseMenu(Font font) {
     this.pauseWindow = new VBox();
 
-    Button continueButton = new Button();
-    Button restartButton = new Button();
-    Button exitButton = new Button();
+    Label textoPausa = new Label("Pause");
+    textoPausa.setFont(font);
+    this.continueButton = new Button("Continue");
+    this.restartButton = new Button("Restart");
+    this.exitButton = new Button("Exit");
+
+    hoverOverButton(this.continueButton);
+    hoverOverButton(this.restartButton);
+    hoverOverButton(this.exitButton);
+
+    this.pauseWindow.getChildren().addAll(textoPausa, this.continueButton, this.restartButton, this.exitButton);
+    this.pauseWindow.setSpacing(20);
+    this.pauseWindow.setAlignment(Pos.CENTER);
+    this.pauseWindow.setVisible(false);
+    this.pauseWindow.setManaged(false);
+  }
+
+
+  private void toggleVisibility() {
+    if (this.pauseWindow.isVisible()) {
+      this.pauseWindow.setVisible(false);
+      this.pauseWindow.setManaged(false);
+      this.fondoPausa.setVisible(false);
+      this.fondoPausa.setManaged(false);
+    }
   }
 
   private void togglePause() {
     if (Clock.INSTANCE.isPaused) {
-    } else {
+      this.pauseWindow.setVisible(true); this.pauseWindow.setManaged(true);
+      this.fondoPausa.setVisible(true); this.fondoPausa.setManaged(false);
 
+      this.continueButton.setOnMouseClicked(event -> {
+        this.continueButton.setStyle("-fx-background-color: #3ac129;");
+        Clock.INSTANCE.unpauseGame();
+        toggleVisibility();
+      });
+
+      this.restartButton.setOnMouseClicked(event -> {
+        toggleVisibility();
+        Clock.INSTANCE.unpauseGame();
+        updateGame.startGame();
+        resetTablero();
+        showHoldPiece();
+      });
+
+      this.exitButton.setOnMouseClicked(event -> {
+        Clock.INSTANCE.gameOver();
+        resetTablero();
+        this.HoldPiece.getChildren().clear();
+        toggleVisibility();
+        this.pantallaTetris.setRoot(this.rootcontainer);
+
+        Clock.INSTANCE.unpauseGame();
+
+      });
+
+    } else {
+      toggleVisibility();
     }
   }
 
@@ -245,21 +304,22 @@ public class GUI extends Application {
     Image Background = new Image(getClass().getResourceAsStream("/images/Mainmenu.gif"));
     ImageView background = new ImageView(Background);
 
-    StackPane rootcontainer = new StackPane();
-
+    this.rootcontainer = new StackPane();
+    StackPane layoutMenujuego = new StackPane();
+    StackPane layoutConfig = new StackPane();
     BorderPane menuPrincipal = new BorderPane();
     BorderPane menuJuego = new BorderPane();
     BorderPane menuConfiguracion = new BorderPane();
     ScrollPane scrollConfig = new ScrollPane();
     menuConfiguracion.setCenter(scrollConfig);
-    Scene pantallaTetris = new Scene(rootcontainer, Color.WHITE);
+    this.pantallaTetris = new Scene(this.rootcontainer, Color.WHITE);
 
-    background.fitHeightProperty().bind(rootcontainer.widthProperty());
-    background.fitHeightProperty().bind(rootcontainer.heightProperty());
+    background.fitHeightProperty().bind(this.rootcontainer.widthProperty());
+    background.fitHeightProperty().bind(this.rootcontainer.heightProperty());
     background.setPreserveRatio(true);
     background.setSmooth(true);
 
-    rootcontainer.getChildren().addAll(background, menuPrincipal);
+    this.rootcontainer.getChildren().addAll(background, menuPrincipal);
 
     VBox botonesInicio = new VBox();
 
@@ -269,8 +329,8 @@ public class GUI extends Application {
     tituloMenuPrincipal.setFill(Color.WHITE);
     tituloMenuPrincipal.setFont(tetrisfontTitulo);
 
-    setupMenuButton(iniciarJuego, pantallaTetris, menuJuego, "INICIAR", textoBotones, rootcontainer);
-    setupMenuButton(Configuracion, pantallaTetris, menuConfiguracion, "CONFIG", textoBotones, rootcontainer);
+    setupMenuButton(iniciarJuego,  layoutMenujuego, "INICIAR", textoBotones);
+    setupMenuButton(Configuracion,  layoutConfig, "CONFIG", textoBotones);
 
     botonesInicio.getChildren().addAll(tituloMenuPrincipal, iniciarJuego, Configuracion);
     botonesInicio.setSpacing(20);
@@ -300,11 +360,13 @@ public class GUI extends Application {
 
     setupConfigButtons(ConfigUI, keybinds, configuracionTexto);
     ConfigUI.getChildren().addFirst(tituloConfiguracion);
-    setupMenuButton(back, pantallaTetris, menuPrincipal, "BACK", textoBotones, rootcontainer);
+    setupMenuButton(back, this.rootcontainer, "BACK", textoBotones);
     ConfigUI.getChildren().add(back);
 
     menuConfiguracion.setBottom(back);
     menuConfiguracion.setCenter(scrollConfig);
+
+    layoutConfig.getChildren().add(menuConfiguracion );
 
     scrollConfig.setContent(ConfigUI);
     scrollConfig.setFitToWidth(true);
@@ -313,13 +375,15 @@ public class GUI extends Application {
     smoothScroll(scrollConfig);
 
     // Juego
+
+
     VBox tableroDerecho = new VBox();
     VBox tableroIzquierdo = new VBox();
-    GridPane HoldPiece = new GridPane();
+    this.HoldPiece = new GridPane();
 
     for (int i = 0; i < 4; i++) {
-      HoldPiece.getColumnConstraints().add(new ColumnConstraints(cellWidht));
-      HoldPiece.getRowConstraints().add(new RowConstraints(cellHeight));
+      this.HoldPiece.getColumnConstraints().add(new ColumnConstraints(cellWidht));
+      this.HoldPiece.getRowConstraints().add(new RowConstraints(cellHeight));
     }
 
     Label holdLabel = new Label("HOLD");
@@ -333,10 +397,10 @@ public class GUI extends Application {
     holdLabel.setAlignment(Pos.CENTER_RIGHT);
     holdLabel.setMaxWidth(Double.MAX_VALUE);
 
-    HoldPiece.setAlignment(Pos.CENTER_RIGHT);
-    HoldPiece.setPrefSize((cellWidht * 4), (cellHeight * 4));
+    this.HoldPiece.setAlignment(Pos.CENTER_RIGHT);
+    this.HoldPiece.setPrefSize((cellWidht * 4), (cellHeight * 4));
 
-    tableroIzquierdo.getChildren().addAll(holdLabel, HoldPiece);
+    tableroIzquierdo.getChildren().addAll(holdLabel, this.HoldPiece);
 
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -355,12 +419,29 @@ public class GUI extends Application {
     menuJuego.setCenter(Tablero);
     BorderPane.setAlignment(Tablero, Pos.CENTER);
 
+    fondoPausa = new Rectangle();
+    this.fondoPausa.widthProperty().bind(layoutMenujuego.widthProperty());
+    this.fondoPausa.heightProperty().bind(layoutMenujuego.heightProperty());
+    this.fondoPausa.setFill(Color.GREY);
+    this.fondoPausa.setOpacity(0.9);
+    this.fondoPausa.setVisible(false);
+    this.fondoPausa.setManaged(false);
+
+    createPauseMenu(tetrisfontTitulo);
+
+    layoutMenujuego.getChildren().addAll(menuJuego, this.fondoPausa,this.pauseWindow);
+
+
+
     currentScene.setTitle("Tetris");
-    currentScene.setScene(pantallaTetris);
+    currentScene.setScene(this.pantallaTetris);
     currentScene.setMaximized(true);
     currentScene.show();
 
-    pantallaTetris.setOnKeyPressed(event -> {
+
+
+
+    this.pantallaTetris.setOnKeyPressed(event -> {
 
       KeyCode currentKey = event.getCode();
       System.out.println(event.getCharacter());
@@ -372,7 +453,7 @@ public class GUI extends Application {
         }
       }
 
-      if (Clock.INSTANCE.playing) {
+      if (Clock.INSTANCE.playing && !Clock.INSTANCE.isPaused) {
         switch (curkey) {
           case "Left" -> updateGame.movePiece(0, -1);
           case "Right" -> updateGame.movePiece(0, 1);
@@ -381,11 +462,17 @@ public class GUI extends Application {
           case "Rotate" -> updateGame.pieceRotate();
           case "Hold" -> {
             updateGame.holdPiece();
-            showHoldPiece(HoldPiece);
+            showHoldPiece();
+          }
+          case "Pause" -> {
+            Clock.INSTANCE.pauseGame();
+            togglePause();
           }
           default -> System.out.println("Se ha presionado la tecla" + currentKey);
         }
-        if (curkey == "Pause") {
+      } else if (Clock.INSTANCE.isPaused)  {
+        if (curkey.equals("Pause")) {
+          Clock.INSTANCE.unpauseGame();
           togglePause();
         }
       }
