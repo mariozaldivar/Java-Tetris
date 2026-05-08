@@ -2,6 +2,7 @@ package Tetris;
 
 import javafx.animation.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -58,7 +59,7 @@ public class GUI extends Application {
   //Configuracion del tablero
   private void CrearTablero(){
     Tablero.setAlignment(Pos.CENTER);
-    Tablero.setMaxSize(Region.USE_PREF_SIZE,Region.USE_PREF_SIZE);
+    Tablero.setMaxSize(BOARD_WIDTH, BOARD_HEIGHT);
     for (int rows = 0; rows < BOARD_HEIGHT; rows++){
       for (int colums = 0; colums < BOARD_WIDTH; colums++){
         Rectangle Cell = new Rectangle(cellWidht,cellHeight);
@@ -299,28 +300,43 @@ public class GUI extends Application {
     VBox tableroIzquierdo = new VBox();
     GridPane HoldPiece = new GridPane();
 
-    BorderPane posicionHold = new BorderPane();
-
-
     for (int i = 0; i <4; i++){
       HoldPiece.getColumnConstraints().add( new ColumnConstraints(cellWidht));
       HoldPiece.getRowConstraints().add(new RowConstraints(cellHeight));
     }
+
+    Label holdLabel =  new Label("HOLD");
+
+
+
+    tableroIzquierdo.setMaxWidth(cellWidht * 4);
+    tableroIzquierdo.setMinWidth(cellWidht * 4);
+    tableroIzquierdo.setAlignment(Pos.CENTER_RIGHT);
+    tableroIzquierdo.setSpacing(10);
+
+    holdLabel.setFont(textoBotones);
+    holdLabel.setAlignment(Pos.CENTER_RIGHT);
+    holdLabel.setMaxWidth(Double.MAX_VALUE);
+
     HoldPiece.setAlignment(Pos.CENTER_RIGHT);
     HoldPiece.setPrefSize((cellWidht*4),(cellHeight*4));
 
-
-    tableroIzquierdo.setAlignment(Pos.CENTER);
-    tableroIzquierdo.setPadding(new Insets(20));
-    tableroIzquierdo .setPrefWidth(0);
-
-    Label holdLabel =  new Label("HOLD");
-    holdLabel.setFont(textoBotones);
     tableroIzquierdo.getChildren().addAll(holdLabel,HoldPiece);
-    posicionHold.setRight(tableroIzquierdo);
-    menuJuego.setLeft(posicionHold);
+
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+
+    HBox holdPiecePosition = new HBox();
+    holdPiecePosition.setAlignment(Pos.CENTER_RIGHT);
+    holdPiecePosition.getChildren().add(tableroIzquierdo);
+
+    holdPiecePosition.setMaxWidth(Double.MAX_VALUE);
 
 
+    menuJuego.setLeft(holdPiecePosition);
+
+
+    tableroIzquierdo.setStyle("-fx-background-color: rgba(255, 0, 0, 0.2);");
 
     CrearTablero();
     menuJuego.setCenter(Tablero);
@@ -343,17 +359,24 @@ public class GUI extends Application {
         }
       }
 
-      switch (curkey){
-        case "Left" -> updateGame.movePiece(0,-1);
-        case "Right" -> updateGame.movePiece(0,1);
-        case "Hard drop" -> updateGame.hardDrop();
-        case "Rotate" -> updateGame.pieceRotate();
-        case "Hold" -> {
-                updateGame.holdPiece();
-                showHoldPiece(HoldPiece);
+      if (Clock.INSTANCE.playing){
+        switch (curkey){
+          case "Left" -> updateGame.movePiece(0,-1);
+          case "Right" -> updateGame.movePiece(0,1);
+          case "Hard drop" -> updateGame.hardDrop();
+          case "Rotate" -> updateGame.pieceRotate();
+          case "Hold" -> {
+                  updateGame.holdPiece();
+                  showHoldPiece(HoldPiece);
+          }
+          default -> System.out.println("Se ha presionado la tecla" + currentKey);
         }
-        default -> System.out.println("Se ha presionado la tecla" + currentKey);
       }
+    });
+
+    currentScene.setOnCloseRequest(event -> {
+      Platform.exit();
+      System.exit(0);
     });
   }
 
