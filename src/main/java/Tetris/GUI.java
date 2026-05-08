@@ -215,7 +215,12 @@ public class GUI extends Application {
 
   }
 
-  private void pauseMenu(){}
+  private void pauseMenu(VBox pauseMenu){
+
+
+
+
+  }
 
 
 
@@ -280,6 +285,7 @@ public class GUI extends Application {
     keybinds.put("Rotate Counterclockwise", KeyCode.Z);
     keybinds.put("rotate 180",KeyCode.A);
     keybinds.put("Hold",KeyCode.C);
+    keybinds.put("Pause",KeyCode.ESCAPE);
 
     setupConfigButtons(ConfigUI, keybinds, configuracionTexto);
     ConfigUI.getChildren().addFirst(tituloConfiguracion);
@@ -296,6 +302,10 @@ public class GUI extends Application {
     smoothScroll(scrollConfig);
 
     //Juego
+    VBox pauseMenu = new VBox();
+    Button continueGame = new Button();
+    Button exitGame = new Button();
+
     VBox tableroDerecho = new VBox();
     VBox tableroIzquierdo = new VBox();
     GridPane HoldPiece = new GridPane();
@@ -369,6 +379,7 @@ public class GUI extends Application {
                   updateGame.holdPiece();
                   showHoldPiece(HoldPiece);
           }
+          case "Pause" -> Clock.INSTANCE.pauseGame();
           default -> System.out.println("Se ha presionado la tecla" + currentKey);
         }
       }
@@ -411,5 +422,10 @@ public class GUI extends Application {
 
     }.start();
   }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
+
 
 }
