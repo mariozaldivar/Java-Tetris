@@ -1,5 +1,8 @@
 package Tetris;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Game {
   public static final int BOARD_HEIGHT = 20;
   public static final int BOARD_WIDTH = 10;
@@ -9,6 +12,7 @@ public class Game {
   public GhostPiece ghostPiece = new GhostPiece();
   public Piece holdPiece;
   public boolean holdedThisTurn;
+  public Queue<Piece> pieceQueue = new LinkedList<>();
 
   /*
    * Cosas necesarias para entender este script:
@@ -66,7 +70,16 @@ public class Game {
 
   private void getNewPiece() {
     checkLineClears();
-    this.currentPiece = new Piece();
+    if (this.pieceQueue.size() == 0) {
+      for (int i = 0; i < 3; i++) {
+        this.pieceQueue.add(new Piece());
+      }
+      this.currentPiece = new Piece();
+    } else {
+      this.currentPiece = this.pieceQueue.peek();
+      this.pieceQueue.poll();
+      this.pieceQueue.add(new Piece());
+    }
 
     // Antes de dibujar la nueva pieza, revisa si no hay nada en donde debería
     // dibujarse por default. En caso de que si, llama a GameOver
@@ -270,7 +283,9 @@ public class Game {
         this.holdPiece = this.currentPiece;
         this.holdPiece.reset();
 
-        this.currentPiece = new Piece();
+        this.currentPiece = this.pieceQueue.peek();
+        this.pieceQueue.poll();
+        this.pieceQueue.add(new Piece());
 
         if (canBeDrawnWithoutUndrawing(this.currentPiece.row, this.currentPiece.col, this.currentPiece.shape)) {
           drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
@@ -304,7 +319,6 @@ public class Game {
   }
 
   Game() {
-    getNewPiece();
-    Clock.INSTANCE.suscribe(this::pieceFall);
+    startGame();
   }
 }
