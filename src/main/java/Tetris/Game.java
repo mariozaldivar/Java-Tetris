@@ -242,7 +242,7 @@ public class Game {
   public void hardDrop() {
 
     while (canBeDrawn(this.currentPiece.row + 1, this.currentPiece.col, this.currentPiece.shape)) {
-      drawCurrentPiece(this.currentPiece.row + 1, this.currentPiece.col);
+      this.currentPiece.row++;
     }
     drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
     // TODO: Aquí implementar chequeo de líneas
