@@ -1,5 +1,7 @@
 package Tetris;
 
+import javafx.application.Platform;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -17,6 +19,7 @@ import java.util.concurrent.*;
 public enum Clock {
   INSTANCE;
 
+  private boolean isTicking = false;
   public boolean playing = true;
   public boolean isPaused = false;
   private long speed = 500; // Es la velocidad con la que se actualiza el tick
@@ -59,12 +62,17 @@ public enum Clock {
     System.out.println("Se ha terminado el juego");
   }
 
+
   public void tick() {// Evento Tick
-    if (isPaused) {
+    if (isPaused || isTicking) {
       return;
     } else {
-      tickListeners.forEach(Runnable::run);
-      System.out.println("The suscribed listeners are: " + tickListeners.toString());
+      isTicking = true;
+      Platform.runLater(() -> {
+        tickListeners.forEach(Runnable::run);
+        System.out.println("The suscribed listeners are: " + tickListeners.toString());
+        isTicking = false;
+      });
       // ForEach recorre toda la lista de funciones que hay en tickListeners
       // al ser una lista de objetos Runnable (ejecutables), por cada una, ejecuta su
       // atributo run
@@ -111,6 +119,11 @@ public enum Clock {
       }
     }
     return buffer;
+  }
+
+  public void updateSpeed(int level) {
+    long newSpeed = (long)(Math.pow(0.8 - ((level - 1) * 0.007), level - 1) * 1000);
+    updateClockSpeed(newSpeed);
   }
 
 }

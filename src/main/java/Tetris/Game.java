@@ -4,6 +4,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Game {
+  private int score = 0;
+  private int level = 1;
+  private int totalLinesCleared = 0;
   public static final int BOARD_HEIGHT = 20;
   public static final int BOARD_WIDTH = 10;
   public int[][] board = new int[BOARD_HEIGHT][BOARD_WIDTH]; // Declara un board 10x20 (con 2 de overhead) y lo
@@ -13,6 +16,9 @@ public class Game {
   public Piece holdPiece;
   public boolean holdedThisTurn;
   public Queue<Piece> pieceQueue = new LinkedList<>();
+  public boolean queueChanged = false;
+  public final Runnable pieceFallListener = this::pieceFall;
+
 
   /*
    * Cosas necesarias para entender este script:
@@ -40,20 +46,45 @@ public class Game {
   }
 
   public void checkLineClears() {
+    int linesRemoved = 0;
     for (int i = BOARD_HEIGHT - 1; i >= 0; i--) {
-      // Empezando desde abajo, revisa si alguna línea está completa
       if (checkIfCleared(i)) {
-        // Si si está, va uno por uno copiando el valor de la línea de arriba de la
-        // actual, y cuando llega a la última, la vuelve toda ceros
         removeFullRow(i);
+        linesRemoved++;
         i = BOARD_HEIGHT;
       }
-      System.out.println("Board being checked: ");
       Clock.INSTANCE.printIntMatrix(this.board);
-
-      System.out.println("i se revisó para los valores: " + i);
+    }
+    if (linesRemoved > 0) {
+      calcularPuntos(linesRemoved);
     }
   }
+
+  private void calcularPuntos(int lineas) {
+    // Tabla de puntos según la imagen (nivel siempre es el nivel ANTES del clear):
+    // Single  → 100 × nivel
+    // Double  → 300 × nivel
+    // Triple  → 500 × nivel
+    // Tetris  → 800 × nivel
+    int puntosGanados = switch (lineas) {
+      case 1 -> 100 * level;
+      case 2 -> 300 * level;
+      case 3 -> 500 * level;
+      case 4 -> 800 * level; // ¡Tetris!
+      default -> 0;
+    };
+    this.score += puntosGanados;
+    this.totalLinesCleared += lineas;
+
+    // Criterio de subida de nivel: cada 10 líneas borradas sube un nivel
+    if (this.totalLinesCleared >= this.level * 5 * this.level) {
+      this.level++;
+      Clock.INSTANCE.updateSpeed(this.level);
+    }
+  }
+
+  public int getScore() { return score; }
+  public int getLevel() { return level; }
 
   public void removeFullRow(int fullRow) {
     for (int currentRow = fullRow; currentRow > 0; currentRow--) {
@@ -79,6 +110,7 @@ public class Game {
       this.currentPiece = this.pieceQueue.peek();
       this.pieceQueue.poll();
       this.pieceQueue.add(new Piece());
+      this.queueChanged = true;
     }
 
     // Antes de dibujar la nueva pieza, revisa si no hay nada en donde debería
@@ -258,6 +290,7 @@ public class Game {
       this.currentPiece.row++;
     }
     drawCurrentPiece(this.currentPiece.row, this.currentPiece.col);
+    // TODO: Aquí implementar chequeo de líneas
     getNewPiece();
 
   }
@@ -301,7 +334,7 @@ public class Game {
   public void GameOver() {
     System.out.println("GAME IS SUPPOSED TO BE OVER!!!!!");
 
-    Clock.INSTANCE.unsubscribe(this::pieceFall);
+    Clock.INSTANCE.unsubscribe(pieceFallListener);
     Clock.INSTANCE.gameOver();
 
   }
@@ -311,21 +344,18 @@ public class Game {
   }
 
   public void startGame() {
-    Clock.INSTANCE.clearLastGame();
-    for (int i = 0; i < BOARD_HEIGHT; i++) {
-      for (int j = 0; j < BOARD_WIDTH; j++) {
-        this.board[i][j] = 0;
-      }
-    }
-    this.currentPiece.reset();
+    this.board = new int[BOARD_HEIGHT][BOARD_WIDTH];
     this.holdPiece = null;
+    this.score = 0;
+    this.level = 1;
+    this.totalLinesCleared = 0;
+    this.queueChanged = false;
+    Clock.INSTANCE.unsubscribe(pieceFallListener);
     getNewPiece();
-
-    // Encontrar una mejor maner en otro momento
-    if (Clock.INSTANCE.tickListeners.size() == 0) {
-      Clock.INSTANCE.suscribe(this::pieceFall);
-    }
-    Clock.INSTANCE.startGame();
+    Clock.INSTANCE.suscribe(pieceFallListener);
   }
 
+  Game() {
+    startGame();
+  }
 }

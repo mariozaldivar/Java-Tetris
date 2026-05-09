@@ -37,12 +37,9 @@ import static Tetris.Game.BOARD_WIDTH;
 */
 
 //Anaddir fondo a el juego y menu -
-//Poner el layout de la ountuacion y el hold -
-//Hacer el menu de pause
 //Hacer el retry y gameover en la gui
 //Reset keybinds -
 //hacer que las letras salten en los menus  y que el texto de la tecla ya usada escrollee en el boton -
-//Hacer que se muestren las siguientes piesas
 //
 
 public class GUI extends Application {
@@ -53,8 +50,11 @@ public class GUI extends Application {
   private static final int cellHeight = 30;
   GridPane Tablero = new GridPane();
   Node[][] Cellmap = new Node[BOARD_HEIGHT][BOARD_WIDTH];
+  private Label scoreLabel = new Label("0");
+  private Label levelLabel = new Label("1");
 
   VBox pauseWindow;
+  VBox tableroDerecho;
   Rectangle fondoPausa;
   Button continueButton;
   Button restartButton;
@@ -62,6 +62,8 @@ public class GUI extends Application {
   GridPane HoldPiece;
   Scene pantallaTetris;
   StackPane rootcontainer;
+  Font textoBotones;
+  Label textoPausa;
 
   // Configuracion del tablero
   private void CrearTablero() {
@@ -104,7 +106,7 @@ public class GUI extends Application {
 
   private static Color setColor(int numeroCelda) {
     return switch (numeroCelda) {
-      case 0 -> Color.WHITE;
+      case 0 -> Color.TRANSPARENT;
       case 1 -> Color.RED;
       case 2 -> Color.PALETURQUOISE;
       case 3 -> Color.BLUE;
@@ -135,7 +137,6 @@ public class GUI extends Application {
         System.out.println("Se ha presionado " + nombre);
         updateTableroTetris();
         Clock.INSTANCE.startGame();
-        updateGame.startGame();
       } else if (nombre.equals("CONFIG")) {
         System.out.println("Config");
 
@@ -224,6 +225,7 @@ public class GUI extends Application {
     }
   }
 
+
   private void resetKeybinds(VBox keybindsUI, Map<String, KeyCode> keybinds) {
 
   }
@@ -231,8 +233,8 @@ public class GUI extends Application {
   private void createPauseMenu(Font font) {
     this.pauseWindow = new VBox();
 
-    Label textoPausa = new Label("Pause");
-    textoPausa.setFont(font);
+    this.textoPausa = new Label("Pause");
+    this.textoPausa.setFont(font);
     this.continueButton = new Button("Continue");
     this.restartButton = new Button("Restart");
     this.exitButton = new Button("Exit");
@@ -241,12 +243,13 @@ public class GUI extends Application {
     hoverOverButton(this.restartButton);
     hoverOverButton(this.exitButton);
 
-    this.pauseWindow.getChildren().addAll(textoPausa, this.continueButton, this.restartButton, this.exitButton);
+    this.pauseWindow.getChildren().addAll(this.textoPausa, this.continueButton, this.restartButton, this.exitButton);
     this.pauseWindow.setSpacing(20);
     this.pauseWindow.setAlignment(Pos.CENTER);
     this.pauseWindow.setVisible(false);
     this.pauseWindow.setManaged(false);
   }
+
 
   private void toggleVisibility() {
     if (this.pauseWindow.isVisible()) {
@@ -258,11 +261,13 @@ public class GUI extends Application {
   }
 
   private void togglePause() {
+    if(this.textoPausa.equals("GAME OVER")) {
+      this.textoPausa.setText("PAUSE");
+    }
+
     if (Clock.INSTANCE.isPaused) {
-      this.pauseWindow.setVisible(true);
-      this.pauseWindow.setManaged(true);
-      this.fondoPausa.setVisible(true);
-      this.fondoPausa.setManaged(false);
+      this.pauseWindow.setVisible(true); this.pauseWindow.setManaged(true);
+      this.fondoPausa.setVisible(true); this.fondoPausa.setManaged(false);
 
       this.continueButton.setOnMouseClicked(event -> {
         this.continueButton.setStyle("-fx-background-color: #3ac129;");
@@ -276,17 +281,18 @@ public class GUI extends Application {
         updateGame.startGame();
         resetTablero();
         showHoldPiece();
+        showQueue();
       });
 
       this.exitButton.setOnMouseClicked(event -> {
         Clock.INSTANCE.gameOver();
+        updateGame.startGame();
         resetTablero();
         this.HoldPiece.getChildren().clear();
+        showQueue();
         toggleVisibility();
         this.pantallaTetris.setRoot(this.rootcontainer);
-
         Clock.INSTANCE.unpauseGame();
-
       });
 
     } else {
@@ -294,10 +300,44 @@ public class GUI extends Application {
     }
   }
 
+
+  private void showQueue() {
+    this.tableroDerecho.getChildren().clear();
+    Label textoQueue = new Label("Next");
+    textoQueue.setFont(this.textoBotones);
+    textoQueue.setAlignment(Pos.CENTER);
+    this.tableroDerecho.getChildren().add(textoQueue);
+
+    for (Piece queuePiece : updateGame.pieceQueue) {
+      GridPane verPieza = new GridPane();
+      for (int i = 0; i < 4; i++) {
+        verPieza.getColumnConstraints().add(new ColumnConstraints(cellWidht));
+        verPieza.getRowConstraints().add(new RowConstraints(cellHeight));
+      }
+      int[][] pieceQueueMatrix =  queuePiece.shape;
+      for (int rows = 0; rows < queuePiece.size ; rows++) {
+        for (int colums = 0; colums < queuePiece.size ; colums++) {
+          int currentRectangle = pieceQueueMatrix[rows][colums];
+          Rectangle Cell = new Rectangle(cellWidht, cellHeight);
+          Cell.setFill(setColor(currentRectangle));
+          verPieza.add(Cell, colums, rows);
+        }
+      }
+      this.tableroDerecho.getChildren().add(verPieza);
+    }
+  }
+
+  private void GameOver() {
+
+
+
+  }
+
+
   public void start(Stage currentScene) throws Exception {
     Font tetrisfontTitulo = Font.loadFont(getClass().getResource("/fonts/PressStart2P-Regular.ttf").toExternalForm(),
         80);
-    Font textoBotones = Font.loadFont(getClass().getResource("/fonts/PressStart2P-Regular.ttf").toExternalForm(), 20);
+    this.textoBotones = Font.loadFont(getClass().getResource("/fonts/PressStart2P-Regular.ttf").toExternalForm(), 20);
     Font configuracionTexto = Font.loadFont(getClass().getResource("/fonts/PressStart2P-Regular.ttf").toExternalForm(),
         30);
 
@@ -330,8 +370,8 @@ public class GUI extends Application {
     tituloMenuPrincipal.setFill(Color.WHITE);
     tituloMenuPrincipal.setFont(tetrisfontTitulo);
 
-    setupMenuButton(iniciarJuego, layoutMenujuego, "INICIAR", textoBotones);
-    setupMenuButton(Configuracion, layoutConfig, "CONFIG", textoBotones);
+    setupMenuButton(iniciarJuego,  layoutMenujuego, "INICIAR", this.textoBotones);
+    setupMenuButton(Configuracion,  layoutConfig, "CONFIG", this.textoBotones);
 
     botonesInicio.getChildren().addAll(tituloMenuPrincipal, iniciarJuego, Configuracion);
     botonesInicio.setSpacing(20);
@@ -361,13 +401,13 @@ public class GUI extends Application {
 
     setupConfigButtons(ConfigUI, keybinds, configuracionTexto);
     ConfigUI.getChildren().addFirst(tituloConfiguracion);
-    setupMenuButton(back, this.rootcontainer, "BACK", textoBotones);
+    setupMenuButton(back, this.rootcontainer, "BACK", this.textoBotones);
     ConfigUI.getChildren().add(back);
 
     menuConfiguracion.setBottom(back);
     menuConfiguracion.setCenter(scrollConfig);
 
-    layoutConfig.getChildren().add(menuConfiguracion);
+    layoutConfig.getChildren().add(menuConfiguracion );
 
     scrollConfig.setContent(ConfigUI);
     scrollConfig.setFitToWidth(true);
@@ -377,7 +417,7 @@ public class GUI extends Application {
 
     // Juego
 
-    VBox tableroDerecho = new VBox();
+
     VBox tableroIzquierdo = new VBox();
     this.HoldPiece = new GridPane();
 
@@ -388,12 +428,11 @@ public class GUI extends Application {
 
     Label holdLabel = new Label("HOLD");
 
-    tableroIzquierdo.setMaxWidth(cellWidht * 4);
-    tableroIzquierdo.setMinWidth(cellWidht * 4);
+
     tableroIzquierdo.setAlignment(Pos.CENTER_RIGHT);
     tableroIzquierdo.setSpacing(10);
 
-    holdLabel.setFont(textoBotones);
+    holdLabel.setFont(this.textoBotones);
     holdLabel.setAlignment(Pos.CENTER_RIGHT);
     holdLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -401,23 +440,48 @@ public class GUI extends Application {
     this.HoldPiece.setPrefSize((cellWidht * 4), (cellHeight * 4));
 
     tableroIzquierdo.getChildren().addAll(holdLabel, this.HoldPiece);
+    tableroIzquierdo.setStyle("-fx-border-color: #808080; -fx-border-width: 5px; -fx-border-style: solid;");
+    tableroIzquierdo.setMaxSize(Region.USE_PREF_SIZE  , Region.USE_PREF_SIZE);
 
-    Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
 
-    HBox holdPiecePosition = new HBox();
-    holdPiecePosition.setAlignment(Pos.CENTER_RIGHT);
-    holdPiecePosition.getChildren().add(tableroIzquierdo);
+    //Tablero derecho
+    this.tableroDerecho = new VBox();
+    this.tableroDerecho.setAlignment(Pos.CENTER_LEFT);
+    this.tableroDerecho.setSpacing(5);
+    this.tableroDerecho.setStyle("-fx-border-color: #808080; -fx-border-width: 5px; -fx-border-style: solid;");
+    this.tableroDerecho.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE );
 
-    holdPiecePosition.setMaxWidth(Double.MAX_VALUE);
 
-    menuJuego.setLeft(holdPiecePosition);
+    VBox panelPuntosDerecha = new VBox(10);
+    VBox panelPuntosIzquierda = new VBox(10);
 
-    tableroIzquierdo.setStyle("-fx-background-color: rgba(255, 0, 0, 0.2);");
+    Text txtPuntos = new Text("PUNTUACIÓN:");
+    txtPuntos.setFont(textoBotones);
+    scoreLabel.setFont(textoBotones);
+    scoreLabel.setTextFill(Color.BLACK);
 
+    Text txtLevel = new Text("NIVEL:");
+    txtLevel.setFont(textoBotones);
+    levelLabel.setFont(textoBotones);
+
+    panelPuntosDerecha.getChildren().addAll(txtPuntos, scoreLabel);
+    panelPuntosDerecha.setAlignment(Pos.TOP_RIGHT);
+    panelPuntosDerecha.setPadding(new Insets(50, 20, 0, 20));
+
+    panelPuntosIzquierda.getChildren().addAll(txtLevel, levelLabel);
+    panelPuntosIzquierda.setAlignment(Pos.TOP_LEFT);
+    panelPuntosIzquierda.setPadding(new Insets(50, 20, 0, 20));
+
+    HBox layoutMenuJuego = new HBox();
+    layoutMenuJuego.setAlignment(Pos.CENTER);
+    layoutMenuJuego.setSpacing(10);
+
+    layoutMenuJuego.getChildren().addAll(panelPuntosIzquierda,tableroIzquierdo, this.Tablero, this.tableroDerecho,panelPuntosDerecha);
+
+    showQueue();
     CrearTablero();
-    menuJuego.setCenter(Tablero);
-    BorderPane.setAlignment(Tablero, Pos.CENTER);
+
+    menuJuego.setCenter(layoutMenuJuego);
 
     fondoPausa = new Rectangle();
     this.fondoPausa.widthProperty().bind(layoutMenujuego.widthProperty());
@@ -429,12 +493,14 @@ public class GUI extends Application {
 
     createPauseMenu(tetrisfontTitulo);
 
-    layoutMenujuego.getChildren().addAll(menuJuego, this.fondoPausa, this.pauseWindow);
+    layoutMenujuego.getChildren().addAll(menuJuego, this.fondoPausa,this.pauseWindow);
+
 
     currentScene.setTitle("Tetris");
     currentScene.setScene(this.pantallaTetris);
     currentScene.setMaximized(true);
     currentScene.show();
+
 
     this.pantallaTetris.setOnKeyPressed(event -> {
 
@@ -465,7 +531,7 @@ public class GUI extends Application {
           }
           default -> System.out.println("Se ha presionado la tecla" + currentKey);
         }
-      } else if (Clock.INSTANCE.isPaused) {
+      } else if (Clock.INSTANCE.isPaused)  {
         if (curkey.equals("Pause")) {
           Clock.INSTANCE.unpauseGame();
           togglePause();
@@ -499,14 +565,21 @@ public class GUI extends Application {
   private void updateTableroTetris() {
     new AnimationTimer() {
       private long lastUpdate = 0;
-      private final long velocidadDeCaida = 500_000; // 500ms
-
       @Override
       public void handle(long now) {
-        if (now - lastUpdate >= velocidadDeCaida) {
-          updateTablero();
-          lastUpdate = now;
+        updateTablero();
+        if (updateGame.queueChanged) {
+          showQueue();
+          updateGame.queueChanged = false;
         }
+          scoreLabel.setText(String.valueOf(updateGame.getScore()));
+          levelLabel.setText(String.valueOf(updateGame.getLevel()));
+          lastUpdate = now;
+          //aun no esta listo el gameover
+          if (!Clock.INSTANCE.playing && !Clock.INSTANCE.isPaused) {
+            GameOver();
+          }
+
       }
 
     }.start();
