@@ -46,6 +46,7 @@ public class GUI extends Application {
 
   Game updateGame = new Game();
 
+  private boolean isGameOver = false;
   private static final int cellWidht = 30;
   private static final int cellHeight = 30;
   GridPane Tablero = new GridPane();
@@ -134,8 +135,8 @@ public class GUI extends Application {
       this.pantallaTetris.setRoot(cambiarEscena);
 
       if (nombre.equals("INICIAR")) {
-        System.out.println("Se ha presionado " + nombre);
-        updateTableroTetris();
+        Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
+        updateGame.startGame();
         Clock.INSTANCE.startGame();
       } else if (nombre.equals("CONFIG")) {
         System.out.println("Config");
@@ -253,18 +254,13 @@ public class GUI extends Application {
 
 
   private void toggleVisibility() {
-    if (this.pauseWindow.isVisible()) {
       this.pauseWindow.setVisible(false);
       this.pauseWindow.setManaged(false);
       this.fondoPausa.setVisible(false);
       this.fondoPausa.setManaged(false);
-    }
   }
 
   private void togglePause() {
-    if(this.textoPausa.equals("GAME OVER")) {
-      this.textoPausa.setText("PAUSE");
-    }
 
     if (Clock.INSTANCE.isPaused) {
       this.pauseWindow.setVisible(true); this.pauseWindow.setManaged(true);
@@ -279,6 +275,7 @@ public class GUI extends Application {
       this.restartButton.setOnMouseClicked(event -> {
         toggleVisibility();
         Clock.INSTANCE.unpauseGame();
+        Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
         updateGame.startGame();
         resetTablero();
         showHoldPiece();
@@ -287,6 +284,8 @@ public class GUI extends Application {
 
       this.exitButton.setOnMouseClicked(event -> {
         Clock.INSTANCE.gameOver();
+        Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
+
         updateGame.startGame();
         resetTablero();
         this.HoldPiece.getChildren().clear();
@@ -297,7 +296,10 @@ public class GUI extends Application {
       });
 
     } else {
-      toggleVisibility();
+      if (this.pauseWindow.isVisible()) {
+        toggleVisibility();
+      }
+
     }
   }
 
@@ -329,9 +331,43 @@ public class GUI extends Application {
   }
 
   private void GameOver() {
+    if (isGameOver) {return;}
+    isGameOver = true;
+    this.textoPausa.setText("GAME OVER");
+    this.fondoPausa.setVisible(true);
+    this.pauseWindow.setVisible(true);
+    this.pauseWindow.setManaged(true);
+    this.continueButton.setManaged(false);
+    this.continueButton.setVisible(false);
 
+    this.restartButton.setOnMouseClicked(event -> {
+      isGameOver = false;
+      Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
+      updateGame.startGame();
+      Clock.INSTANCE.startGame();
+      toggleVisibility();
+      resetTablero();
+      showHoldPiece();
+      this.HoldPiece.getChildren().clear();
+      showQueue();
+      this.textoPausa.setText("PAUSE");
+    });
 
-
+    this.exitButton.setOnMouseClicked(event -> {
+      isGameOver = false;
+      Clock.INSTANCE.gameOver();
+      Clock.INSTANCE.playing = true;
+      toggleVisibility();
+      resetTablero();
+      showHoldPiece();
+      this.HoldPiece.getChildren().clear();
+      showQueue();
+      this.textoPausa.setText("PAUSE");
+      this.continueButton.setVisible(true);
+      this.continueButton.setManaged(true);
+      this.pantallaTetris.setRoot(this.rootcontainer);
+    });
+    System.out.println("GAME OVER");
   }
 
 
@@ -392,11 +428,9 @@ public class GUI extends Application {
     Map<String, KeyCode> keybinds = new HashMap<>();
     keybinds.put("Left", KeyCode.LEFT);
     keybinds.put("Right", KeyCode.RIGHT);
-    keybinds.put("Soft drop", KeyCode.DOWN);
+    //keybinds.put("Soft drop", KeyCode.DOWN);
     keybinds.put("Hard drop", KeyCode.SPACE);
     keybinds.put("Rotate", KeyCode.X);
-    keybinds.put("Rotate Counterclockwise", KeyCode.Z);
-    keybinds.put("Rotate 180", KeyCode.A);
     keybinds.put("Hold", KeyCode.C);
     keybinds.put("Pause", KeyCode.ESCAPE);
 
@@ -417,8 +451,6 @@ public class GUI extends Application {
     smoothScroll(scrollConfig);
 
     // Juego
-
-
     VBox tableroIzquierdo = new VBox();
     this.HoldPiece = new GridPane();
 
@@ -503,6 +535,8 @@ public class GUI extends Application {
     currentScene.show();
 
 
+
+
     this.pantallaTetris.setOnKeyPressed(event -> {
 
       KeyCode currentKey = event.getCode();
@@ -544,6 +578,8 @@ public class GUI extends Application {
       Platform.exit();
       System.exit(0);
     });
+    updateTableroTetris();
+
   }
 
   private void smoothScroll(ScrollPane scrollPane) { // Hace que el scroll sea más suave
