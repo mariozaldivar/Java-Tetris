@@ -61,16 +61,11 @@ public class Game {
   }
 
   private void calcularPuntos(int lineas) {
-    // Tabla de puntos según la imagen (nivel siempre es el nivel ANTES del clear):
-    // Single  → 100 × nivel
-    // Double  → 300 × nivel
-    // Triple  → 500 × nivel
-    // Tetris  → 800 × nivel
     int puntosGanados = switch (lineas) {
       case 1 -> 100 * level;
       case 2 -> 300 * level;
       case 3 -> 500 * level;
-      case 4 -> 800 * level; // ¡Tetris!
+      case 4 -> 800 * level;
       default -> 0;
     };
     this.score += puntosGanados;
