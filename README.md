@@ -1,20 +1,23 @@
 
+<h1>INTRODUCCIÓN: </h1>
 
-<h1>Todo list</h1>
+Java-Tetris es un proyecto estudiantil para la materia de Lenguajes Orientados a Objetos, en la universidad Anáhuac Mayab. Se desarrolló utilizando la librería de JavaFX, y con el controlador de dependencias Maven. Favor de referirse a la instalación para los requisitos mínimos, 
+
+<h1>INSTALACIÓN: </h1>
 <p>
+Compatible con: Windows, Linux. 
 
-FÁCIL:
-- Implementar sistema de puntuación
-- Implementar queue (piezas que siguen) de piezas
-- Implementar pieza "Hold"
+Requisitos para utilizar el JAR: 
+  - Tener la versión de Java más reciente (Java 26)
 
-MEDIO: 
-- Implementar sistema de limpiado de líneas
-- Implementar menus de juego
-- Implementar "Hard-Drop"
-- Implementar cambio de velocidades cada cierto número de líneas
 
-DIFÍCIL: 
-- Implementar chequeos de colisión y rebote con los bordes
-- Implementar GhostPiece (pieza que indica en qué posición está cayendo la pieza actual)
+Requisitos para ejecutar desde el código fuente: 
+  - Haber instalado el OpenSDK. 
+  - Tener Maven instalado. 
+  - Correr por medio de la terminal, dentro del directorio del proyecto 
+  `mvn dependency:resolve`
+  - Correr utilizando 
+`mvn javafx:run`
+
+
 </p>
