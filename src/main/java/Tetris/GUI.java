@@ -135,7 +135,6 @@ public class GUI extends Application {
       this.pantallaTetris.setRoot(cambiarEscena);
 
       if (nombre.equals("INICIAR")) {
-        Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
         updateGame.startGame();
         Clock.INSTANCE.startGame();
       } else if (nombre.equals("CONFIG")) {
@@ -207,7 +206,9 @@ public class GUI extends Application {
 
   private void showHoldPiece() {
     this.HoldPiece.getChildren().clear();
-    if (updateGame.holdPiece == null) {return;}
+    if (updateGame.holdPiece == null) {
+      return;
+    }
     int[][] holdPieceMatrix = updateGame.holdPiece.shape;
     int holdPieceSize = updateGame.holdPiece.size;
 
@@ -226,8 +227,6 @@ public class GUI extends Application {
       }
     }
   }
-
-
 
   private void resetKeybinds(VBox keybindsUI, Map<String, KeyCode> keybinds) {
 
@@ -253,19 +252,20 @@ public class GUI extends Application {
     this.pauseWindow.setManaged(false);
   }
 
-
   private void toggleVisibility() {
-      this.pauseWindow.setVisible(false);
-      this.pauseWindow.setManaged(false);
-      this.fondoPausa.setVisible(false);
-      this.fondoPausa.setManaged(false);
+    this.pauseWindow.setVisible(false);
+    this.pauseWindow.setManaged(false);
+    this.fondoPausa.setVisible(false);
+    this.fondoPausa.setManaged(false);
   }
 
   private void togglePause() {
 
     if (Clock.INSTANCE.isPaused) {
-      this.pauseWindow.setVisible(true); this.pauseWindow.setManaged(true);
-      this.fondoPausa.setVisible(true); this.fondoPausa.setManaged(false);
+      this.pauseWindow.setVisible(true);
+      this.pauseWindow.setManaged(true);
+      this.fondoPausa.setVisible(true);
+      this.fondoPausa.setManaged(false);
 
       this.continueButton.setOnMouseClicked(event -> {
         this.continueButton.setStyle("-fx-background-color: #3ac129;");
@@ -275,8 +275,8 @@ public class GUI extends Application {
 
       this.restartButton.setOnMouseClicked(event -> {
         toggleVisibility();
-        Clock.INSTANCE.unpauseGame();
-        Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
+        Clock.INSTANCE.pauseGame();
+
         updateGame.startGame();
         resetTablero();
         showHoldPiece();
@@ -285,7 +285,6 @@ public class GUI extends Application {
 
       this.exitButton.setOnMouseClicked(event -> {
         Clock.INSTANCE.gameOver();
-        Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
 
         updateGame.startGame();
         resetTablero();
@@ -293,7 +292,6 @@ public class GUI extends Application {
         showQueue();
         toggleVisibility();
         this.pantallaTetris.setRoot(this.rootcontainer);
-        Clock.INSTANCE.unpauseGame();
       });
 
     } else {
@@ -303,7 +301,6 @@ public class GUI extends Application {
 
     }
   }
-
 
   private void showQueue() {
     this.tableroDerecho.getChildren().clear();
@@ -318,9 +315,9 @@ public class GUI extends Application {
         verPieza.getColumnConstraints().add(new ColumnConstraints(cellWidht));
         verPieza.getRowConstraints().add(new RowConstraints(cellHeight));
       }
-      int[][] pieceQueueMatrix =  queuePiece.shape;
-      for (int rows = 0; rows < queuePiece.size ; rows++) {
-        for (int colums = 0; colums < queuePiece.size ; colums++) {
+      int[][] pieceQueueMatrix = queuePiece.shape;
+      for (int rows = 0; rows < queuePiece.size; rows++) {
+        for (int colums = 0; colums < queuePiece.size; colums++) {
           int currentRectangle = pieceQueueMatrix[rows][colums];
           Rectangle Cell = new Rectangle(cellWidht, cellHeight);
           Cell.setFill(setColor(currentRectangle));
@@ -332,7 +329,9 @@ public class GUI extends Application {
   }
 
   private void GameOver() {
-    if (isGameOver) {return;}
+    if (isGameOver) {
+      return;
+    }
     isGameOver = true;
     this.textoPausa.setText("GAME OVER");
     this.fondoPausa.setVisible(true);
@@ -340,10 +339,11 @@ public class GUI extends Application {
     this.pauseWindow.setManaged(true);
     this.continueButton.setManaged(false);
     this.continueButton.setVisible(false);
+    Clock.INSTANCE.gameOver();
+    updateGame.GameOver();
 
     this.restartButton.setOnMouseClicked(event -> {
       isGameOver = false;
-      Clock.INSTANCE.unsubscribe(updateGame.pieceFallListener);
       updateGame.startGame();
       Clock.INSTANCE.startGame();
       toggleVisibility();
@@ -354,6 +354,8 @@ public class GUI extends Application {
       this.continueButton.setVisible(true);
       this.continueButton.setManaged(true);
       this.textoPausa.setText("PAUSE");
+      updateGame.startGame();
+      Clock.INSTANCE.startGame();
     });
 
     this.exitButton.setOnMouseClicked(event -> {
@@ -372,7 +374,6 @@ public class GUI extends Application {
     });
     System.out.println("GAME OVER");
   }
-
 
   public void start(Stage currentScene) throws Exception {
     Font tetrisfontTitulo = Font.loadFont(getClass().getResource("/fonts/PressStart2P-Regular.ttf").toExternalForm(),
@@ -410,8 +411,8 @@ public class GUI extends Application {
     tituloMenuPrincipal.setFill(Color.WHITE);
     tituloMenuPrincipal.setFont(tetrisfontTitulo);
 
-    setupMenuButton(iniciarJuego,  layoutMenujuego, "INICIAR", this.textoBotones);
-    setupMenuButton(Configuracion,  layoutConfig, "CONFIG", this.textoBotones);
+    setupMenuButton(iniciarJuego, layoutMenujuego, "INICIAR", this.textoBotones);
+    setupMenuButton(Configuracion, layoutConfig, "CONFIG", this.textoBotones);
 
     botonesInicio.getChildren().addAll(tituloMenuPrincipal, iniciarJuego, Configuracion);
     botonesInicio.setSpacing(20);
@@ -431,7 +432,7 @@ public class GUI extends Application {
     Map<String, KeyCode> keybinds = new HashMap<>();
     keybinds.put("Left", KeyCode.LEFT);
     keybinds.put("Right", KeyCode.RIGHT);
-    //keybinds.put("Soft drop", KeyCode.DOWN);
+    // keybinds.put("Soft drop", KeyCode.DOWN);
     keybinds.put("Hard drop", KeyCode.SPACE);
     keybinds.put("Rotate", KeyCode.X);
     keybinds.put("Hold", KeyCode.C);
@@ -445,7 +446,7 @@ public class GUI extends Application {
     menuConfiguracion.setBottom(back);
     menuConfiguracion.setCenter(scrollConfig);
 
-    layoutConfig.getChildren().add(menuConfiguracion );
+    layoutConfig.getChildren().add(menuConfiguracion);
 
     scrollConfig.setContent(ConfigUI);
     scrollConfig.setFitToWidth(true);
@@ -464,7 +465,6 @@ public class GUI extends Application {
 
     Label holdLabel = new Label("HOLD");
 
-
     tableroIzquierdo.setAlignment(Pos.CENTER_RIGHT);
     tableroIzquierdo.setSpacing(10);
 
@@ -477,16 +477,14 @@ public class GUI extends Application {
 
     tableroIzquierdo.getChildren().addAll(holdLabel, this.HoldPiece);
     tableroIzquierdo.setStyle("-fx-border-color: #808080; -fx-border-width: 5px; -fx-border-style: solid;");
-    tableroIzquierdo.setMaxSize(Region.USE_PREF_SIZE  , Region.USE_PREF_SIZE);
+    tableroIzquierdo.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-
-    //Tablero derecho
+    // Tablero derecho
     this.tableroDerecho = new VBox();
     this.tableroDerecho.setAlignment(Pos.CENTER_LEFT);
     this.tableroDerecho.setSpacing(5);
     this.tableroDerecho.setStyle("-fx-border-color: #808080; -fx-border-width: 5px; -fx-border-style: solid;");
-    this.tableroDerecho.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE );
-
+    this.tableroDerecho.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
     VBox panelPuntosDerecha = new VBox(10);
     VBox panelPuntosIzquierda = new VBox(10);
@@ -512,7 +510,8 @@ public class GUI extends Application {
     layoutMenuJuego.setAlignment(Pos.CENTER);
     layoutMenuJuego.setSpacing(10);
 
-    layoutMenuJuego.getChildren().addAll(panelPuntosIzquierda,tableroIzquierdo, this.Tablero, this.tableroDerecho,panelPuntosDerecha);
+    layoutMenuJuego.getChildren().addAll(panelPuntosIzquierda, tableroIzquierdo, this.Tablero, this.tableroDerecho,
+        panelPuntosDerecha);
 
     showQueue();
     CrearTablero();
@@ -529,16 +528,12 @@ public class GUI extends Application {
 
     createPauseMenu(tetrisfontTitulo);
 
-    layoutMenujuego.getChildren().addAll(menuJuego, this.fondoPausa,this.pauseWindow);
-
+    layoutMenujuego.getChildren().addAll(menuJuego, this.fondoPausa, this.pauseWindow);
 
     currentScene.setTitle("Tetris");
     currentScene.setScene(this.pantallaTetris);
     currentScene.setMaximized(true);
     currentScene.show();
-
-
-
 
     this.pantallaTetris.setOnKeyPressed(event -> {
 
@@ -551,7 +546,6 @@ public class GUI extends Application {
           break;
         }
       }
-
       if (Clock.INSTANCE.playing && !Clock.INSTANCE.isPaused) {
         switch (curkey) {
           case "Left" -> updateGame.movePiece(0, -1);
@@ -569,7 +563,7 @@ public class GUI extends Application {
           }
           default -> System.out.println("Se ha presionado la tecla" + currentKey);
         }
-      } else if (Clock.INSTANCE.isPaused)  {
+      } else if (Clock.INSTANCE.isPaused) {
         if (curkey.equals("Pause")) {
           Clock.INSTANCE.unpauseGame();
           togglePause();
@@ -605,6 +599,7 @@ public class GUI extends Application {
   private void updateTableroTetris() {
     new AnimationTimer() {
       private long lastUpdate = 0;
+
       @Override
       public void handle(long now) {
         updateTablero();
@@ -612,12 +607,12 @@ public class GUI extends Application {
           showQueue();
           updateGame.queueChanged = false;
         }
-          scoreLabel.setText(String.valueOf(updateGame.getScore()));
-          levelLabel.setText(String.valueOf(updateGame.getLevel()));
-          lastUpdate = now;
-          if (!Clock.INSTANCE.playing && !Clock.INSTANCE.isPaused) {
-            GameOver();
-          }
+        scoreLabel.setText(String.valueOf(updateGame.getScore()));
+        levelLabel.setText(String.valueOf(updateGame.getLevel()));
+        lastUpdate = now;
+        if (!Clock.INSTANCE.playing && !Clock.INSTANCE.isPaused) {
+          GameOver();
+        }
 
       }
 

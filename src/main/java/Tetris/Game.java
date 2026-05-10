@@ -19,7 +19,6 @@ public class Game {
   public boolean queueChanged = false;
   public final Runnable pieceFallListener = this::pieceFall;
 
-
   /*
    * Cosas necesarias para entender este script:
    * Funciones lambda: Es un tipo especial de función que se caracteriza por ser
@@ -78,8 +77,13 @@ public class Game {
     }
   }
 
-  public int getScore() { return score; }
-  public int getLevel() { return level; }
+  public int getScore() {
+    return score;
+  }
+
+  public int getLevel() {
+    return level;
+  }
 
   public void removeFullRow(int fullRow) {
     for (int currentRow = fullRow; currentRow > 0; currentRow--) {
@@ -329,7 +333,6 @@ public class Game {
   public void GameOver() {
     System.out.println("GAME IS SUPPOSED TO BE OVER!!!!!");
 
-    Clock.INSTANCE.unsubscribe(pieceFallListener);
     Clock.INSTANCE.gameOver();
 
   }
@@ -339,15 +342,18 @@ public class Game {
   }
 
   public void startGame() {
+    Clock.INSTANCE.unsubscribe(pieceFallListener);
     this.board = new int[BOARD_HEIGHT][BOARD_WIDTH];
     this.holdPiece = null;
     this.score = 0;
     this.level = 1;
     this.totalLinesCleared = 0;
     this.queueChanged = false;
-    Clock.INSTANCE.unsubscribe(pieceFallListener);
+    if (Clock.INSTANCE.tickListeners.size() == 0) {
+      Clock.INSTANCE.suscribe(pieceFallListener);
+    }
+    Clock.INSTANCE.startGame();
     getNewPiece();
-    Clock.INSTANCE.suscribe(pieceFallListener);
   }
 
   Game() {

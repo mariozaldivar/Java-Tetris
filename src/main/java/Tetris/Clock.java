@@ -34,7 +34,7 @@ public enum Clock {
   // hay un tick
   // es necesario cancelar el proceso anterior, entonces con esta variable
   // mantenemos el acceso
-  private final List<Runnable> tickListeners = new ArrayList<>();
+  public final List<Runnable> tickListeners = new ArrayList<>();
   // Lista con todos los métodos suscritos al evento Tick();
 
   public void suscribe(Runnable listener) { // Método para suscribir y almacenar métodos al evento
@@ -61,7 +61,6 @@ public enum Clock {
     currentTickTask.cancel(false);
     System.out.println("Se ha terminado el juego");
   }
-
 
   public void tick() {// Evento Tick
     if (isPaused || isTicking) {
@@ -116,7 +115,7 @@ public enum Clock {
   }
 
   public void updateSpeed(int level) {
-    long newSpeed = (long)(Math.pow(0.8 - ((level - 1) * 0.007), level - 1) * 1000);
+    long newSpeed = (long) (Math.pow(0.8 - ((level - 1) * 0.007), level - 1) * 1000);
     updateClockSpeed(newSpeed);
   }
 
