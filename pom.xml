@@ -16,20 +16,6 @@
       <artifactId>javafx-controls</artifactId>
       <version>13</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-graphics</artifactId>
-      <version>21</version>
-      <classifier>linux</classifier>
-    </dependency>
-    <!-- Para Windows (Crucial para que tus compañeros lo abran) -->
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-graphics</artifactId>
-      <version>21</version>
-      <classifier>win</classifier>
-    </dependency>
   </dependencies>
   <build>
     <plugins>

@@ -206,6 +206,7 @@ public class GUI extends Application {
 
   private void showHoldPiece() {
     this.HoldPiece.getChildren().clear();
+    if (updateGame.holdPiece == null) {return;}
     int[][] holdPieceMatrix = updateGame.holdPiece.shape;
     int holdPieceSize = updateGame.holdPiece.size;
 
@@ -575,7 +576,6 @@ public class GUI extends Application {
           scoreLabel.setText(String.valueOf(updateGame.getScore()));
           levelLabel.setText(String.valueOf(updateGame.getLevel()));
           lastUpdate = now;
-          //aun no esta listo el gameover
           if (!Clock.INSTANCE.playing && !Clock.INSTANCE.isPaused) {
             GameOver();
           }
