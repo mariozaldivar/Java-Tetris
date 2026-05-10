@@ -351,6 +351,8 @@ public class GUI extends Application {
       showHoldPiece();
       this.HoldPiece.getChildren().clear();
       showQueue();
+      this.continueButton.setVisible(true);
+      this.continueButton.setManaged(true);
       this.textoPausa.setText("PAUSE");
     });
 
