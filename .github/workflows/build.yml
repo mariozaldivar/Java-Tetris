@@ -2,7 +2,8 @@ name: Build Tetris
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
   build-windows:
@@ -14,10 +15,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - run: mvn package
-      - uses: actions/upload-artifact@v4
+      - uses: softprops/action-gh-release@v2
         with:
-          name: tetris-windows
-          path: target/windows/
+          files: target/windows/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux:
     runs-on: ubuntu-latest
@@ -28,10 +30,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - run: mvn package
-      - uses: actions/upload-artifact@v4
+      - uses: softprops/action-gh-release@v2
         with:
-          name: tetris-linux
-          path: target/linux/
+          files: target/linux/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-arch:
     runs-on: ubuntu-latest
@@ -47,7 +50,9 @@ jobs:
         run: mvn package
         env:
           JAVA_HOME: /usr/lib/jvm/java-21-openjdk
-      - uses: actions/upload-artifact@v4
+      - uses: softprops/action-gh-release@v2
         with:
-          name: tetris-arch
-          path: target/linux/
+          files: target/linux/*.tar.gz
+          name: tetris-arch-${{ github.ref_name }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
