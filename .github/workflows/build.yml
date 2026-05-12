@@ -17,7 +17,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - run: mvn package
+      - run: mvn package -e
+      - name: List target
+        run: dir target /s /b
+        shell: cmd
       - uses: softprops/action-gh-release@v2
         with:
           files: target/windows/*.zip
@@ -32,7 +35,9 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - run: mvn package
+      - run: mvn package -e
+      - name: List target
+        run: find target -type f
       - uses: softprops/action-gh-release@v2
         with:
           files: target/linux/*.tar.gz
