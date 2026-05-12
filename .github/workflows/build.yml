@@ -32,3 +32,22 @@ jobs:
         with:
           name: tetris-linux
           path: target/linux/
+
+  build-arch:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git jdk21-openjdk maven
+      - uses: actions/checkout@v4
+      - name: Build
+        run: mvn package
+        env:
+          JAVA_HOME: /usr/lib/jvm/java-21-openjdk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tetris-arch
+          path: target/linux/
