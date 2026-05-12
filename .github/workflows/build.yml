@@ -18,12 +18,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - run: mvn package -e
-      - name: List target
-        run: dir target /s /b
-        shell: cmd
       - uses: softprops/action-gh-release@v2
         with:
-          files: target/windows/*.zip
+          files: target/Java-Tetris-*-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -36,10 +33,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - run: mvn package -e
-      - name: List target
-        run: find target -type f
       - uses: softprops/action-gh-release@v2
         with:
-          files: target/linux/*.tar.gz
+          files: target/Java-Tetris-*-linux.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
