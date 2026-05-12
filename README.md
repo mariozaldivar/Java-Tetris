@@ -25,8 +25,7 @@ En caso de que el juego no se ejecute directamente, ejecutar por medio de la ter
 <h2>Diagrama UML del proyecto: </h2>
 <img src="./Java Tetris UML Diagram.png"> 
 
-<h2>Video explicando la arquitectura del juego: </h2>
-<a>https://drive.google.com/file/d/1A-1Vh8x6mzeZun7Pze8Adj9lgu92Pgl_/view?usp=drivesdk</a>
+<a href="https://drive.google.com/file/d/1A-1Vh8x6mzeZun7Pze8Adj9lgu92Pgl_/view?usp=drivesdk"><h2>Video explicando la arquitectura del juego </h2> </a>
 
 
 Requisitos para ejecutar desde el código fuente: 
