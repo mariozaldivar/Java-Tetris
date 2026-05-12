@@ -4,6 +4,6 @@
 /home/Mario/Programas/Java-Tetris/src/main/java/Tetris/Piece.java
 /home/Mario/Programas/Java-Tetris/src/main/java/Tetris/GUI.java
 /home/Mario/Programas/Java-Tetris/src/main/java/Tetris/Game.java
-/home/Mario/Programas/Java-Tetris/src/main/java/Tetris/Clock.java
-/home/Mario/Programas/Java-Tetris/src/main/java/org/openjfx/SystemInfo.java
 /home/Mario/Programas/Java-Tetris/src/main/java/module-info.java
+/home/Mario/Programas/Java-Tetris/src/main/java/org/openjfx/SystemInfo.java
+/home/Mario/Programas/Java-Tetris/src/main/java/Tetris/Clock.java

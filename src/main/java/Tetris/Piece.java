@@ -100,10 +100,4 @@ public class Piece {
 
   }
 
-  public void main() {
-
-    Clock.INSTANCE.printIntMatrix(this.shape);
-    Clock.INSTANCE.printIntMatrix(this.shape);
-  }
-
 }

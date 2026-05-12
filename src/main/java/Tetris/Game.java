@@ -50,7 +50,7 @@ public class Game {
       if (checkIfCleared(i)) {
         removeFullRow(i);
         linesRemoved++;
-        i = BOARD_HEIGHT;
+        i++;
       }
       Clock.INSTANCE.printIntMatrix(this.board);
     }
@@ -91,10 +91,10 @@ public class Game {
 
         this.board[currentRow][j] = this.board[currentRow - 1][j];
       }
-      for (int j = 0; j < BOARD_WIDTH; j++) {
-        this.board[0][j] = 0;
+    }
+    for (int j = 0; j < BOARD_WIDTH; j++) {
+      this.board[0][j] = 0;
 
-      }
     }
   }
 
