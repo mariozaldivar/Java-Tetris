@@ -35,24 +35,3 @@ jobs:
           files: target/linux/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-arch:
-    runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
-    steps:
-      - name: Install dependencies
-        run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm git jdk21-openjdk maven
-      - uses: actions/checkout@v4
-      - name: Build
-        run: mvn package
-        env:
-          JAVA_HOME: /usr/lib/jvm/java-21-openjdk
-      - uses: softprops/action-gh-release@v2
-        with:
-          files: target/linux/*.tar.gz
-          name: tetris-arch-${{ github.ref_name }}.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
