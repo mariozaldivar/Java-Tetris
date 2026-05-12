@@ -1,6 +1,6 @@
 package Tetris;
 
-public class GhostPiece {
+public class GhostPiece extends AbstractPiece {
   public int[][] shape;
   public int row;
   public int col;
@@ -19,6 +19,14 @@ public class GhostPiece {
     this.row = piece.row;
     this.col = piece.col;
 
+  }
+
+  @Override
+  public void reset() {
+    this.shape = null;
+    this.row = 0;
+    this.col = 0;
+    this.size = 0;
   }
 
 }

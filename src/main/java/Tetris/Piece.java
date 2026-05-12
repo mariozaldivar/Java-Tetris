@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
-public class Piece {
+public class Piece extends AbstractPiece {
 
   public int[][] shape;
   public int row = 0;
